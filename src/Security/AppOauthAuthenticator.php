@@ -117,7 +117,7 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
         // change "app_homepage" to some route in your app
         // $targetUrl = $this->router->generate('app_homepage');
         //
-        return new RedirectResponse($this->router->generate('default'));
+        return new RedirectResponse($this->router->generate('admin'));
         // or, on success, let the request continue to be handled by the controller
         // return null;
     }
