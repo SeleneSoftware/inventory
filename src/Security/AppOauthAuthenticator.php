@@ -2,10 +2,12 @@
 
 namespace App\Security;
 
-use App\Entity\User; // your user entity
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
+use League\OAuth2\Client\Tool\ArrayAccessorTrait;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,18 +18,24 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AppOauthAuthenticator extends OAuth2Authenticator implements AuthenticationEntrypointInterface
 {
+    use ArrayAccessorTrait;
     private $clientRegistry;
     private $entityManager;
     private $router;
+    private $params;
+    private $client;
 
-    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager, RouterInterface $router)
+    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager, RouterInterface $router, ContainerBagInterface $params, HttpClientInterface $client)
     {
         $this->clientRegistry = $clientRegistry;
         $this->entityManager = $entityManager;
         $this->router = $router;
+        $this->params = $params;
+        $this->client = $client;
     }
 
     public function supports(Request $request): ?bool
@@ -64,19 +72,42 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
                 // 3) Maybe you just want to "register" them by creating
                 // a User object
                 $user = new User();
-                var_dump(get_class_methods($githubUser));
+                // var_dump($githubUser->toArray());
 
-                var_dump((array) $githubUser);
+                $orgURL = $this->getValueByKey($githubUser->toArray(), 'organizations_url');
 
-                exit;
+                $response = $this->client->request(
+                    'GET',
+                    $orgURL
+                );
 
-                $user->setGithubId($githubUser->getId())
+                if (200 != $response->getStatusCode()) {
+                    return false;
+                }
+                $orgArray = json_decode($response->getContent(), true);
+                if (!count($orgArray)) {
+                    return false;
+                }
+                foreach ($orgArray as $org) {
+                    if ('SeleneSoftware' === $this->getValueByKey($orgArray[0], 'login')) {
+                        $user->setGithubId($githubUser->getId())
+                            ->setEmail($githubUser->getEmail())
+                        ;
+                        $this->entityManager->persist($user);
+                        $this->entityManager->flush();
 
-                ;
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                        return $user;
+                    }
+                }
 
-                return $user;
+                // $clientID = $this->params->get('app.githubClientID');
+                // $clientSecret = $this->params->get('app.githubSecret');
+
+                // var_dump($request->query->get('code'));
+
+                // exit('shit');
+
+                return false;
             })
         );
     }
@@ -86,10 +117,9 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
         // change "app_homepage" to some route in your app
         // $targetUrl = $this->router->generate('app_homepage');
         //
-        // return new RedirectResponse($targetUrl);
-
+        return new RedirectResponse($this->router->generate('default'));
         // or, on success, let the request continue to be handled by the controller
-        return null;
+        // return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
@@ -106,7 +136,7 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
         return new RedirectResponse(
-            '/connect/', // might be the site, where users choose their oauth provider
+            '/connect/github/', // might be the site, where users choose their oauth provider
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }

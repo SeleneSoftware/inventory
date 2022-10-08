@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,7 +23,8 @@ class GithubController extends AbstractController
         return $clientRegistry
             ->getClient('github') // key used in config/packages/knpu_oauth2_client.yaml
             ->redirect([
-                'read:user', 'user:email', // the scopes you want to access
+                'read:org', 'user', // the scopes you want to access
+                // 'user',
             ])
         ;
     }
@@ -35,32 +36,7 @@ class GithubController extends AbstractController
      *
      * @Route("/connect/github/check", name="connect_github_check")
      */
-    public function connectCheckAction(Request $request, ClientRegistry $clientRegistry)
+    public function connectCheckAction(Request $request, ClientRegistry $clientRegistry, ManagerRegistry $manager)
     {
-        // ** if you want to *authenticate* the user, then
-        // leave this method blank and create a Guard authenticator
-        // (read below)
-
-        /** @var \KnpU\OAuth2ClientBundle\Client\Provider\GithubClient $client */
-        $client = $clientRegistry->getClient('github');
-
-        try {
-            // the exact class depends on which provider you're using
-            /** @var \League\OAuth2\Client\Provider\GithubUser $user */
-            $user = $client->fetchUser();
-
-            // do something with all this new power!
-            // e.g. $name = $user->getFirstName();
-            var_dump($user);
-
-            exit;
-            // ...
-        } catch (IdentityProviderException $e) {
-            // something went wrong!
-            // probably you should return the reason to the user
-            var_dump($e->getMessage());
-
-            exit;
-        }
     }
 }
