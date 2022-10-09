@@ -6,19 +6,23 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import './styles/base.scss';
+import "./styles/app.scss";
 
 // start the Stimulus application
-import './bootstrap';
+import "./bootstrap";
 
-import './js/app.js';
-// import './js/scripts-init/calendar.js';
-import './js/scripts-init/demo.js';
-import './js/scripts-init/maps.js';
-import './js/scripts-init/scrollbar.js';
-import './js/scripts-init/toastr.js';
-// import './js/scripts-init/charts/chartjs.js';
-// import './js/scripts-init/charts/chartsjs-utils.js';
+// in src/App.js
+import * as React from "react";
+import { createRoot } from "react-dom/client";
+import { Admin } from "react-admin";
+import jsonServerProvider from "ra-data-json-server";
 
-// import "chartjs";
-import Chart from 'chart.js/auto';
+const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com");
+
+const App = () => <Admin dataProvider={dataProvider} />;
+
+// export default App;
+
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(<App tab="home" />);
