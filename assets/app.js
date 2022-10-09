@@ -12,10 +12,13 @@ import './styles/base.scss';
 import './bootstrap';
 
 import './js/app.js';
-import './js/scripts-init/calendar.js';
+// import './js/scripts-init/calendar.js';
 import './js/scripts-init/demo.js';
 import './js/scripts-init/maps.js';
 import './js/scripts-init/scrollbar.js';
 import './js/scripts-init/toastr.js';
-import './js/scripts-init/charts/chartjs.js';
-import './js/scripts-init/charts/chartsjs-utils.js';
+// import './js/scripts-init/charts/chartjs.js';
+// import './js/scripts-init/charts/chartsjs-utils.js';
+
+// import "chartjs";
+import Chart from 'chart.js/auto';
