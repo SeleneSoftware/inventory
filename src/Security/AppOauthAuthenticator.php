@@ -64,15 +64,12 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
 
                 // 2) do we have a matching user by email?
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-
                 if ($existingUser) {
                     return $existingUser;
                 }
 
-                // 3) Maybe you just want to "register" them by creating
-                // a User object
+                // 3) Now save them to the database so we can just use them again
                 $user = new User();
-                // var_dump($githubUser->toArray());
 
                 $orgURL = $this->getValueByKey($githubUser->toArray(), 'organizations_url');
 
@@ -100,13 +97,6 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
                     }
                 }
 
-                // $clientID = $this->params->get('app.githubClientID');
-                // $clientSecret = $this->params->get('app.githubSecret');
-
-                // var_dump($request->query->get('code'));
-
-                // exit('shit');
-
                 return false;
             })
         );
@@ -114,12 +104,7 @@ class AppOauthAuthenticator extends OAuth2Authenticator implements Authenticatio
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // change "app_homepage" to some route in your app
-        // $targetUrl = $this->router->generate('app_homepage');
-        //
         return new RedirectResponse($this->router->generate('admin'));
-        // or, on success, let the request continue to be handled by the controller
-        // return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
