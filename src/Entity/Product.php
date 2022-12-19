@@ -31,6 +31,9 @@ class Product
     #[ORM\Column]
     private ?int $sku = null;
 
+    #[ORM\Column]
+    private array $keywords = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +95,18 @@ class Product
     public function setSku(int $sku): self
     {
         $this->sku = $sku;
+
+        return $this;
+    }
+
+    public function getKeywords(): array
+    {
+        return $this->keywords;
+    }
+
+    public function setKeywords(array $keywords): self
+    {
+        $this->keywords = $keywords;
 
         return $this;
     }
