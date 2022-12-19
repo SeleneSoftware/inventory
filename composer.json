@@ -1,7 +1,7 @@
 {
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
@@ -9,27 +9,34 @@
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.13",
-        "easycorp/easyadmin-bundle": "^4.4",
+        "doctrine/orm": "^2.12",
+        "easycorp/easyadmin-bundle": "^4.3",
         "symfony/console": "6.2.*",
         "symfony/dotenv": "6.2.*",
+        "symfony/expression-language": "6.2.*",
         "symfony/flex": "^2",
         "symfony/form": "6.2.*",
         "symfony/framework-bundle": "6.2.*",
-        "symfony/maker-bundle": "^1.48",
+        "symfony/maker-bundle": "^1.43",
+        "symfony/proxy-manager-bridge": "6.2.*",
         "symfony/runtime": "6.2.*",
         "symfony/security-bundle": "6.2.*",
+        "symfony/security-csrf": "6.2.*",
         "symfony/twig-bundle": "6.2.*",
-        "symfony/validator": "6.2.*",
-        "symfony/webpack-encore-bundle": "^1.16",
+        "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "6.2.*",
         "twig/extra-bundle": "^3.4",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
+            "composer/package-versions-deprecated": true,
             "symfony/flex": true,
             "symfony/runtime": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
         },
         "sort-packages": true
     },
@@ -70,13 +77,11 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.2.*",
-            "docker": true
+            "require": "6.2.*"
         }
     },
-       "require-dev": {
+    "require-dev": {
         "symfony/stopwatch": "6.2.*",
-        "symfony/var-dumper": "6.2.*",
         "symfony/web-profiler-bundle": "6.2.*"
     }
 }
