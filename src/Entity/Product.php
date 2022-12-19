@@ -2,13 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProductRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ApiResource(paginationItemsPerPage: 30)]
 class Product
 {
     #[ORM\Id]
@@ -22,14 +20,20 @@ class Product
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 20, scale: 4)]
-    private ?string $price = null;
+    #[ORM\Column(length: 255)]
+    private ?string $sku = null;
 
     #[ORM\Column]
-    private ?int $qty = null;
+    private ?int $onhand = null;
 
     #[ORM\Column]
-    private ?int $sku = null;
+    private ?float $price = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $public = null;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    private ?Category $category = null;
 
     #[ORM\Column]
     private array $keywords = [];
@@ -63,7 +67,31 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getSku(): ?string
+    {
+        return $this->sku;
+    }
+
+    public function setSku(string $sku): self
+    {
+        $this->sku = $sku;
+
+        return $this;
+    }
+
+    public function getOnhand(): ?int
+    {
+        return $this->onhand;
+    }
+
+    public function setOnhand(int $onhand): self
+    {
+        $this->onhand = $onhand;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
     {
         return $this->price;
     }
@@ -75,26 +103,26 @@ class Product
         return $this;
     }
 
-    public function getQty(): ?int
+    public function isPublic(): ?bool
     {
-        return $this->qty;
+        return $this->public;
     }
 
-    public function setQty(int $qty): self
+    public function setPublic(?bool $public): self
     {
-        $this->qty = $qty;
+        $this->public = $public;
 
         return $this;
     }
 
-    public function getSku(): ?int
+    public function getCategory(): ?Category
     {
-        return $this->sku;
+        return $this->category;
     }
 
-    public function setSku(int $sku): self
+    public function setCategory(?Category $category): self
     {
-        $this->sku = $sku;
+        $this->category = $category;
 
         return $this;
     }

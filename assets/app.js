@@ -9,26 +9,4 @@
 import './styles/app.css';
 
 // start the Stimulus application
-import "./bootstrap";
-
-// in src/App.js
-import * as React from "react";
-import { createRoot } from "react-dom/client";
-import { Admin, Resource, ListGuesser, EditGuesser } from "react-admin";
-import ProductList from './lists/Product.js'
-import jsonServerProvider from "ra-data-json-server";
-
-// const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com");
-const dataProvider = jsonServerProvider("http://inventory.box/api");
-
-const App = () => (
-    <Admin dataProvider={dataProvider}>
-        <Resource name="products" list={ProductList} edit={EditGuesser} />
-        <Resource name="product_types" list={ListGuesser} />
-    </Admin>
-);
-// export default App;
-
-const container = document.getElementById("root");
-const root = createRoot(container);
-root.render(<App tab="home" />);
+import './bootstrap';
