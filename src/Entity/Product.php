@@ -24,9 +24,6 @@ class Product
     private ?string $sku = null;
 
     #[ORM\Column]
-    private ?int $onhand = null;
-
-    #[ORM\Column]
     private ?float $price = null;
 
     #[ORM\Column(nullable: true)]
@@ -75,18 +72,6 @@ class Product
     public function setSku(string $sku): self
     {
         $this->sku = $sku;
-
-        return $this;
-    }
-
-    public function getOnhand(): ?int
-    {
-        return $this->onhand;
-    }
-
-    public function setOnhand(int $onhand): self
-    {
-        $this->onhand = $onhand;
 
         return $this;
     }
