@@ -35,6 +35,15 @@ class Product
     #[ORM\Column]
     private array $keywords = [];
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
+    #[ORM\Column]
+    private array $location = [];
+
+    #[ORM\Column]
+    private array $attribute = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +129,42 @@ class Product
     public function setKeywords(array $keywords): self
     {
         $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getLocation(): array
+    {
+        return $this->location;
+    }
+
+    public function setLocation(array $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getAttribute(): array
+    {
+        return $this->attribute;
+    }
+
+    public function setAttribute(array $attribute): self
+    {
+        $this->attribute = $attribute;
 
         return $this;
     }

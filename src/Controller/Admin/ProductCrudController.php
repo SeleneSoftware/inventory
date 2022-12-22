@@ -17,12 +17,12 @@ class ProductCrudController extends AbstractCrudController
     {
         return [
             'name',
+            AssociationField::new('category'),
             'description',
+            'slug',
             'sku',
-            'onhand',
             'price',
             'public',
-            AssociationField::new('category'),
         ];
     }
 }
