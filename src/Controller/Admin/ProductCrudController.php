@@ -4,7 +4,11 @@ namespace App\Controller\Admin;
 
 use App\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
 class ProductCrudController extends AbstractCrudController
 {
@@ -18,10 +22,14 @@ class ProductCrudController extends AbstractCrudController
         return [
             'name',
             AssociationField::new('category'),
-            'description',
+            TextareaField::new('description'),
             'slug',
             'sku',
+            MoneyField::new('price')->setCurrency('USD'),
             'price',
+            'qty',
+            ArrayField::new('keywords'),
+            CollectionField::new('attribute'), // ->useEntryCrudForm(CategoryCrudController::class),
             'public',
         ];
     }

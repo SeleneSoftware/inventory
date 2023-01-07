@@ -44,6 +44,9 @@ class Product
     #[ORM\Column]
     private array $attribute = [];
 
+    #[ORM\Column(nullable: true)]
+    private ?int $qty = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -165,6 +168,18 @@ class Product
     public function setAttribute(array $attribute): self
     {
         $this->attribute = $attribute;
+
+        return $this;
+    }
+
+    public function getQty(): ?int
+    {
+        return $this->qty;
+    }
+
+    public function setQty(?int $qty): self
+    {
+        $this->qty = $qty;
 
         return $this;
     }
