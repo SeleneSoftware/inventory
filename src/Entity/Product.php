@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,7 +26,7 @@ class Product
     private ?string $sku = null;
 
     #[ORM\Column]
-    private ?float $price = null;
+    private ?float $cost = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $public = null;
@@ -32,20 +34,22 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     private ?Category $category = null;
 
-    #[ORM\Column]
-    private array $keywords = [];
-
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
     #[ORM\Column]
     private array $location = [];
 
-    #[ORM\Column]
-    private array $attribute = [];
-
     #[ORM\Column(nullable: true)]
     private ?int $qty = null;
+
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Attributes::class, cascade: ['all'])]
+    private Collection $attributes;
+
+    public function __construct()
+    {
+        $this->attributes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -88,14 +92,14 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getCost(): ?float
     {
-        return $this->price;
+        return $this->cost;
     }
 
-    public function setPrice(float $price): self
+    public function setCost(float $cost): self
     {
-        $this->price = $price;
+        $this->cost = $cost;
 
         return $this;
     }
@@ -124,18 +128,6 @@ class Product
         return $this;
     }
 
-    public function getKeywords(): array
-    {
-        return $this->keywords;
-    }
-
-    public function setKeywords(array $keywords): self
-    {
-        $this->keywords = $keywords;
-
-        return $this;
-    }
-
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -160,18 +152,6 @@ class Product
         return $this;
     }
 
-    public function getAttribute(): array
-    {
-        return $this->attribute;
-    }
-
-    public function setAttribute(array $attribute): self
-    {
-        $this->attribute = $attribute;
-
-        return $this;
-    }
-
     public function getQty(): ?int
     {
         return $this->qty;
@@ -180,6 +160,36 @@ class Product
     public function setQty(?int $qty): self
     {
         $this->qty = $qty;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Attributes>
+     */
+    public function getAttributes(): Collection
+    {
+        return $this->attributes;
+    }
+
+    public function addAttribute(Attributes $attribute): self
+    {
+        if (!$this->attributes->contains($attribute)) {
+            $this->attributes->add($attribute);
+            $attribute->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttribute(Attributes $attribute): self
+    {
+        if ($this->attributes->removeElement($attribute)) {
+            // set the owning side to null (unless already changed)
+            if ($attribute->getProduct() === $this) {
+                $attribute->setProduct(null);
+            }
+        }
 
         return $this;
     }

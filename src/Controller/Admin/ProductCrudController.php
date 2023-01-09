@@ -21,15 +21,16 @@ class ProductCrudController extends AbstractCrudController
     {
         return [
             'name',
+            'sku',
+            'slug',
             AssociationField::new('category'),
             TextareaField::new('description'),
-            'slug',
-            'sku',
-            MoneyField::new('price')->setCurrency('USD'),
-            'price',
+            MoneyField::new('cost')->setCurrency('USD'),
             'qty',
-            ArrayField::new('keywords'),
-            CollectionField::new('attribute'), // ->useEntryCrudForm(CategoryCrudController::class),
+            // ArrayField::new('keywords'),
+            CollectionField::new('attributes')
+                ->setEntryIsComplex()
+                ->useEntryCrudForm(AttributesCrudController::class),
             'public',
         ];
     }
