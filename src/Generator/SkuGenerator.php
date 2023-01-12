@@ -11,12 +11,8 @@ class SkuGenerator extends AbstractIdGenerator
     {
         $sequenceId = $entity->getId();
 
-        $query = $em->createQuery('UPDATE Product i SET i.sku = i.sku + 1 WHERE i.id = :id');
-        $query->setParameter('id', $sequenceId);
-        $query->execute();
-
-        $increment = $em->createQuery('SELECT i.sku FROM Product i WHERE i.id = :id');
-        $increment->setParameter('id', $sequenceId);
+        var_dump($entity->getId());
+        exit;
 
         return "{$entity->getSupplier()->getPrefix()}.{$increment->getSingleResult()['sku']}";
     }

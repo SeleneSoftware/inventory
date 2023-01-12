@@ -23,8 +23,6 @@ class Product
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'App\Generator\SkuGenerator')]
     private ?string $sku = null;
 
     #[ORM\Column]
