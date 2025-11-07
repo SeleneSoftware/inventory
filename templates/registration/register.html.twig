@@ -1,17 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title -%}
+    {{ parent() }} - Register
+    {%- endblock -%}
 
-{% block body %}
-    <h1>Register</h1>
+    {% block body %}
+        <section class="flex items-center justify-center min-h-screen bg-gray-100">
+            <div class="container flex flex-col items-center max-w-md p-6 rounded-md sm:p-10 bg-gray-50 text-gray-800">
+                <div class="mb-8 text-center">
+                    <h1 class="my-3 text-4xl font-bold">Register Today!</h1>
+                    <p class="text-sm text-gray-600">Register and create your account</p>
+                </div>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+                {% if registrationForm.vars.errors|length > 0 %}
+                    {% for error in registrationForm.vars.errors %}
+                        <div class="mb-8 text-center iborder border-red-500 bg-red-100 rounded p-4">
+                            <p class="text-sm text-red-700 font-medium">Error: {{ error.message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {{ form_start(registrationForm, {'attr':{'class':'space-y-12'}}) }}
+                <div class="space-y-4">
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
-{% endblock %}
+
+                    <div>
+                        {{ form_label(registrationForm.email,'Email Address',{'label_attr':{'class':'block mb-2 text-sm'}}) }}
+                        {{ form_widget(registrationForm.email, {'attr':{'class':'w-full px-3 py-2 border rounded-md border-gray-300 bg-gray-50 text-gray-800', 'placeholder':'mail@email.com'}}) }}
+                        {% if registrationForm.email.vars.errors|length > 0 %}
+                            {% for error in registrationForm.email.vars.errors %}
+                                <p class="text-sm text-red-600">
+                                {{ error.message }}
+                                </p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            {{ form_label(registrationForm.plainPassword,'Create a Password',{'label_attr':{'class':'text-sm'}}) }}
+                        </div>
+
+                        {{ form_widget(registrationForm.plainPassword, {'attr':{'class':'w-full px-3 py-2 border rounded-md border-gray-300 bg-gray-50 text-gray-800', 'placeholder':'******'}}) }}
+                        {% if registrationForm.plainPassword.vars.errors|length > 0 %}
+                            {% for error in registrationForm.plainPassword.vars.errors %}
+                                <p class="text-sm text-red-600">
+                                {{ error.message }}
+                                </p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <div class="flex items-center">
+                        {{ form_widget(registrationForm.agreeTerms, {'attr':{'class':"mr-1 rounded-sm focus:ring-purple-600 focus:border-purple-600 focus:ring-2 accent-purple-600"}}) }}
+                        {{ form_label(registrationForm.agreeTerms, 'Agree to Terms', {'label_attr':{'class':'text-sm text-gray-600'}}) }}
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div>
+                        <button type="submit" class="w-full px-8 py-3 font-semibold rounded-md bg-purple-600 text-gray-50">Sign in</button>
+                    </div>
+                    <p class="px-6 text-sm text-center text-gray-600">Already have an account?
+                    <a rel="noopener noreferrer" href="{{ path('app_login') }}" class="hover:underline text-purple-600">Login</a>.
+                    </p>
+                </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </section>
+    {% endblock %}
+
