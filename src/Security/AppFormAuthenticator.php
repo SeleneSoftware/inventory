@@ -22,6 +22,8 @@ class AppFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
+    public const REDIRECT_ROUTE = 'app_dashboard';
+
     public function __construct(private UrlGeneratorInterface $urlGenerator)
     {
     }
@@ -49,8 +51,8 @@ class AppFormAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        return new RedirectResponse($this->urlGenerator->generate(self::REDIRECT_ROUTE));
+        // throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
     protected function getLoginUrl(Request $request): string
