@@ -22,6 +22,9 @@ class Store
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $code = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Store
     public function setCode(?string $code): static
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function isStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?bool $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
