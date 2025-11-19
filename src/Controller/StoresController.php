@@ -54,12 +54,37 @@ final class StoresController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Stuff
+            $entityManager->persist($id);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_stores');
         }
 
         return $this->render('stores/edit.html.twig', [
             'page_type' => 'Edit '.$id->getName(),
             'form' => $form,
         ]);
+    }
+
+    #[Route('/stores/deactivate/{id}', name: 'app_stores_deactivate')]
+    public function deactivateStore(Store $id, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $id->setStatus(false);
+
+        $entityManager->persist($id);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_stores');
+    }
+
+    #[Route('/stores/activate/{id}', name: 'app_stores_activate')]
+    public function activateStore(Store $id, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $id->setStatus(true);
+
+        $entityManager->persist($id);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_stores');
     }
 }

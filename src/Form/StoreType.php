@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Store;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,6 +15,14 @@ class StoreType extends AbstractType
         $builder
             ->add('name')
             ->add('link')
+            // ->add('status', ChoiceType::class, [
+            //     'choices' => [
+            //         'Active' => true,
+            //         'InActive' => false,
+            //     ],
+            //     'expanded' => false,
+            //     'multiple' => true,
+            // ])
             ->add('code')
         ;
     }
