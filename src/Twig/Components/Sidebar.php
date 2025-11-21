@@ -19,6 +19,18 @@ final class Sidebar
                 'name' => 'Stores',
                 'path' => 'app_stores',
             ],
+            [
+                'name' => 'Products',
+                'path' => 'app_stores',
+            ],
+            [
+                'name' => 'Stock Locations',
+                'path' => 'app_stores',
+            ],
+            [
+                'name' => 'Suppliers',
+                'path' => 'app_stores',
+            ],
         ];
     }
 }
