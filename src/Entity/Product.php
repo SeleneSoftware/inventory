@@ -3,11 +3,25 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
+    public const TYPE_SINGLE = 0;
+
+    public const TYPE_PARENT = 1;
+
+    public const TYPE_VARIANT = 2;
+
+    public const TYPE_VIRTUAL = 3;
+
+    public const TYPE_SERVICE = 4;
+
+    public const TYPE_BUNDLE = 5;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,6 +35,23 @@ class Product
 
     #[ORM\Column(nullable: true)]
     private ?int $qty = null;
+
+    #[ORM\Column]
+    private ?int $type = null;
+
+    /**
+     * @var Collection<int, Store>
+     */
+    #[ORM\ManyToMany(targetEntity: Store::class, inversedBy: 'products')]
+    private Collection $store;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $status = null;
+
+    public function __construct()
+    {
+        $this->store = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -59,6 +90,54 @@ class Product
     public function setQty(?int $qty): static
     {
         $this->qty = $qty;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(int $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Store>
+     */
+    public function getStore(): Collection
+    {
+        return $this->store;
+    }
+
+    public function addStore(Store $store): static
+    {
+        if (!$this->store->contains($store)) {
+            $this->store->add($store);
+        }
+
+        return $this;
+    }
+
+    public function removeStore(Store $store): static
+    {
+        $this->store->removeElement($store);
+
+        return $this;
+    }
+
+    public function isStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?bool $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

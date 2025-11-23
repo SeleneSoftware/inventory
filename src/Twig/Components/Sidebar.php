@@ -21,7 +21,7 @@ final class Sidebar
             ],
             [
                 'name' => 'Products',
-                'path' => 'app_stores',
+                'path' => 'app_products',
             ],
             [
                 'name' => 'Stock Locations',
