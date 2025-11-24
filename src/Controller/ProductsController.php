@@ -66,4 +66,14 @@ final class ProductsController extends AbstractController
 
         return $this->redirectToRoute('app_products');
     }
+
+    #[Route('/products/attributes', name: 'app_products_attributes')]
+    public function productAttributes(EntityManagerInterface $entityManager): Response
+    {
+        $repo = $entityManager->getRepository(Product::class);
+
+        return $this->render('products/index.html.twig', [
+            'products' => $repo->findAll(),
+        ]);
+    }
 }

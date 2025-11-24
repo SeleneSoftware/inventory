@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -48,16 +49,22 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?bool $status = null;
 
+    #[ORM\Column(type: Types::ARRAY)]
+    private array $attributes = [];
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
+    private ?self $variants = null;
+
     /**
-     * @var Collection<int, ProductAttribute>
+     * @var Collection<int, self>
      */
-    #[ORM\ManyToMany(targetEntity: ProductAttribute::class)]
-    private Collection $attributes;
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'variants')]
+    private Collection $parent;
 
     public function __construct()
     {
         $this->store = new ArrayCollection();
-        $this->attributes = new ArrayCollection();
+        $this->parent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -149,26 +156,56 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, ProductAttribute>
-     */
-    public function getAttributes(): Collection
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function addAttribute(ProductAttribute $attribute): static
+    public function setAttributes(array $attributes): static
     {
-        if (!$this->attributes->contains($attribute)) {
-            $this->attributes->add($attribute);
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function getVariants(): ?self
+    {
+        return $this->variants;
+    }
+
+    public function setVariants(?self $variants): static
+    {
+        $this->variants = $variants;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getParent(): Collection
+    {
+        return $this->parent;
+    }
+
+    public function addParent(self $parent): static
+    {
+        if (!$this->parent->contains($parent)) {
+            $this->parent->add($parent);
+            $parent->setVariants($this);
         }
 
         return $this;
     }
 
-    public function removeAttribute(ProductAttribute $attribute): static
+    public function removeParent(self $parent): static
     {
-        $this->attributes->removeElement($attribute);
+        if ($this->parent->removeElement($parent)) {
+            // set the owning side to null (unless already changed)
+            if ($parent->getVariants() === $this) {
+                $parent->setVariants(null);
+            }
+        }
 
         return $this;
     }
