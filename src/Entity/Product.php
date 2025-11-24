@@ -48,9 +48,16 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?bool $status = null;
 
+    /**
+     * @var Collection<int, ProductAttribute>
+     */
+    #[ORM\ManyToMany(targetEntity: ProductAttribute::class)]
+    private Collection $attributes;
+
     public function __construct()
     {
         $this->store = new ArrayCollection();
+        $this->attributes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -138,6 +145,30 @@ class Product
     public function setStatus(?bool $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductAttribute>
+     */
+    public function getAttributes(): Collection
+    {
+        return $this->attributes;
+    }
+
+    public function addAttribute(ProductAttribute $attribute): static
+    {
+        if (!$this->attributes->contains($attribute)) {
+            $this->attributes->add($attribute);
+        }
+
+        return $this;
+    }
+
+    public function removeAttribute(ProductAttribute $attribute): static
+    {
+        $this->attributes->removeElement($attribute);
 
         return $this;
     }
