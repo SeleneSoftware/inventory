@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\ProductAttribute;
+use App\Form\ProductAttributeType;
 use App\Form\ProductType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,10 +72,33 @@ final class ProductsController extends AbstractController
     #[Route('/products/attributes', name: 'app_products_attributes')]
     public function productAttributes(EntityManagerInterface $entityManager): Response
     {
-        $repo = $entityManager->getRepository(Product::class);
+        $repo = $entityManager->getRepository(ProductAttribute::class);
 
-        return $this->render('products/index.html.twig', [
-            'products' => $repo->findAll(),
+        return $this->render('products/attributes/index.html.twig', [
+            'attributes' => $repo->findAll(),
+        ]);
+    }
+
+    #[Route('/products/attributes/new', name: 'app_products_attributes_new')]
+    public function newProductAttribute(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $product = new ProductAttribute();
+        $form = $this->createForm(ProductAttributeType::class, $product);
+
+        $form->handleRequest($request);
+
+        // dd($product);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // dd($product);
+            $entityManager->persist($product);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_products_attributes');
+        }
+
+        return $this->render('products/attributes/edit.html.twig', [
+            'page_type' => 'New',
+            'form' => $form,
         ]);
     }
 }

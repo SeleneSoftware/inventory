@@ -11,7 +11,9 @@ import './bootstrap.js';
 
     window.Alpine = Alpine;
 
+    import './js/tags.js';
     Alpine.start();
+
 
 import './styles/app.css';
 
