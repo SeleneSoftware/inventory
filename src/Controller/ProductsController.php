@@ -89,7 +89,7 @@ final class ProductsController extends AbstractController
 
         // dd($product);
         if ($form->isSubmitted() && $form->isValid()) {
-            // dd($product);
+            dd($product);
             $entityManager->persist($product);
             $entityManager->flush();
 

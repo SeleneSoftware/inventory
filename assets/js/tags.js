@@ -16,6 +16,7 @@ window.tagInput = function (initial) {
         },
 
         get serialized() {
+            console.log(this.tags);
             return this.tags.join(',');
         }
     }
