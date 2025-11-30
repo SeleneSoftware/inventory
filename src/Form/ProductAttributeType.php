@@ -18,7 +18,7 @@ class ProductAttributeType extends AbstractType
                 'required' => false,
                 'label' => 'Value',
                 'attr' => [
-                    'x-data' => 'tagInput()',
+                    // 'x-data' => 'tagInput()',
                     'x-model' => 'input',
                     'class' => 'hidden', // we hide the underlying text input
                 ],
