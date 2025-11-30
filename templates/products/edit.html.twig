@@ -1,10 +1,10 @@
 {% extends 'base.dashboard.html.twig' %}
 
-{% block title %}Hello StoresController!{% endblock %}
+{% block title %}{{ page_type }} Product{% endblock %}
 
 {% block main %}
     <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
-        <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">{{ page_type }} Store</h2>
+        <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">{{ page_type }} Product</h2>
 
         {{ form_start(form) }}
                 <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">

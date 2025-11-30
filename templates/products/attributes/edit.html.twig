@@ -1,6 +1,6 @@
 {% extends 'base.dashboard.html.twig' %}
 
-{% block title %}Hello StoresController!{% endblock %}
+{% block title %}Hello Product Attributes!{% endblock %}
 
     {% block main %}
         <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
@@ -15,7 +15,7 @@
 <div x-data="tagInput('{{ form.value.vars.value ? form.value.vars.value|join(',') : '' }}')"
      class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
 
-    {{ form_label(form.value,'Product SKU',{'label_attr':{'class':'text-gray-700 dark:text-gray-200'}}) }}
+    {{ form_label(form.value,'Attribute Values',{'label_attr':{'class':'text-gray-700 dark:text-gray-200'}}) }}
 
     <div>
         <div class="flex flex-wrap gap-2 p-2 bg-white border border-gray-200 rounded-md

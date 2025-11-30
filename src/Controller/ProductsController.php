@@ -101,4 +101,25 @@ final class ProductsController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/products/attributes/edit/{id}', name: 'app_products_attributes_edit')]
+    public function editProductAttribute(ProductAttribute $id, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $product = $id;
+        $form = $this->createForm(ProductAttributeType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($product);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_products_attributes');
+        }
+
+        return $this->render('products/attributes/edit.html.twig', [
+            'page_type' => 'Edit',
+            'form' => $form,
+        ]);
+    }
 }
