@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Type;
 
 use App\Entity\ProductAttribute;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 class ProductAttributeFormType extends AbstractType
@@ -29,13 +30,8 @@ class ProductAttributeFormType extends AbstractType
             )
             ->addDependent('value', 'name', function (DependentField $field, ?ProductAttribute $attribute) {
                 $field->add(ChoiceType::class, [
-                    'placeholder' => null === $meal ? 'Select an Attribute First' : 'Please Select a Value',
-                    'choices' => function (?ProductAttribute $attribute): ?array {
-                        return $attribute->getValue();
-                        // foreach ($a as $attribute->getValue()) {
-                        //     yield strtoupper($a);
-                        // }
-                    },
+                    'placeholder' => null === $attribute ? 'Select an Attribute First' : 'Please Select a Value',
+                    'choices' => $attribute ? $attribute->getValue() : [],
                 ]);
             })
         ;

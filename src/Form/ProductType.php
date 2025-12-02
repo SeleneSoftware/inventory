@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Product;
 use App\Entity\Store;
+use App\Form\Type\ProductAttributeFormType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -35,6 +36,7 @@ class ProductType extends AbstractType
                 'multiple' => true,
                 'expanded' => false,
             ])
+            ->add('attributes', ProductAttributeFormType::class)
         ;
     }
 
