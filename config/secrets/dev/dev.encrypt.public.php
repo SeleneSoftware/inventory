@@ -1,3 +1,5 @@
-<?php // dev.encrypt.public on Tue, 02 Dec 2025 17:23:58 +0000
+<?php
+
+// dev.encrypt.public on Tue, 02 Dec 2025 17:23:58 +0000
 
 return "\xCD\x9F\xA1\x9E\xB6\xE2v\x3A\xB0V\x2C\x0A\xFA\x5E\xC4P\xE0j\x29\xCA\xC1\x14\xF4\x9E\xA9\x0CZ\x95\x96.Gj";
