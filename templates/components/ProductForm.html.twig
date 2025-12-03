@@ -25,7 +25,7 @@
 
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
         {% for item_form in form.attributes %}
-        {{ form_label(item_form,'Attribute',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
+            {{ form_label(item_form,'Attribute',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
             {{ form_widget(item_form) }}
             {{ form_row(item_form.vars.button_delete, {label: 'X', attr: {class: 'btn btn-outline-danger'}}) }}
         {% endfor %}

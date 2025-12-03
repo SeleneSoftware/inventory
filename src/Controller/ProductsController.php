@@ -32,9 +32,29 @@ final class ProductsController extends AbstractController
 
         $form->handleRequest($request);
 
-        // dd($product);
         if ($form->isSubmitted() && $form->isValid()) {
-            // dd($product);
+            $entityManager->persist($product);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_products');
+        }
+
+        return $this->render('products/edit.html.twig', [
+            'page_type' => 'New',
+            'form' => $form,
+            'product' => $product,
+        ]);
+    }
+
+    #[Route('/products/edit/{id}', name: 'app_products_edit')]
+    public function editProduct(EntityManagerInterface $entityManager, Request $request, Product $id): Response
+    {
+        $product = $id;
+        $form = $this->createForm(ProductType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($product);
             $entityManager->flush();
 
