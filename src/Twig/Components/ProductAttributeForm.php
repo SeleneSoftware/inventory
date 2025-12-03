@@ -29,6 +29,8 @@ class ProductAttributeForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
+        // dd('CUNT');
+
         return $this->createForm(
             ProductAttributeFormType::class,
             $this->productAttribute

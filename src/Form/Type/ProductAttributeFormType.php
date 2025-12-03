@@ -20,6 +20,7 @@ class ProductAttributeFormType extends AbstractType
          *    composer require symfonycasts/dynamic-forms
          */
         $builder = new DynamicFormBuilder($builder);
+        dd($options);
         $builder
             ->add('name', ChoiceType::class, [
                 'choice_label' => function (?ProductAttribute $attribute): string {

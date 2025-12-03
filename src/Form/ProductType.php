@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
 class ProductType extends AbstractType
 {
@@ -36,7 +37,15 @@ class ProductType extends AbstractType
                 'multiple' => true,
                 'expanded' => false,
             ])
-            ->add('attributes', ProductAttributeFormType::class)
+            ->add('attributes', LiveCollectionType::class, [
+                'entry_type' => ProductAttributeFormType::class,
+                'entry_options' => ['label' => false],
+                'label' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            // ->add('attributes', ProductAttributeFormType::class)
         ;
     }
 
