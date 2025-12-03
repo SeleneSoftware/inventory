@@ -1,0 +1,39 @@
+<div
+        {{ attributes }}
+        >
+
+        {{ form_start(form) }}
+        <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+            {{ form_label(form.name,'Name of Product',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
+            {{ form_widget(form.name,{'attr': {'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring'}}) }}
+        </div>
+
+    <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+        {{ form_label(form.SKU,'Product SKU',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
+        {{ form_widget(form.SKU,{'attr': {'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring'}}) }}
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+        {{ form_label(form.store,'Stores',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
+        {{ form_widget(form.store,{'attr': {'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring'}}) }}
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+        {{ form_label(form.type,'Type of Product',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
+        {{ form_widget(form.type,{'attr': {'class': 'block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring'}}) }}
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+        {% for item_form in form.attributes %}
+        {{ form_label(item_form,'Attribute',{'label_attr': {'class': 'text-gray-700 dark:text-gray-200'}}) }}
+            {{ form_widget(item_form) }}
+            {{ form_row(item_form.vars.button_delete, {label: 'X', attr: {class: 'btn btn-outline-danger'}}) }}
+        {% endfor %}
+    </div>
+    {{ form_widget(form.attributes.vars.button_add, {label: '+ Add Attribute', attr: {class: 'px-6 py-2 font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80'}}) }}
+
+    <div class="flex justify-end mt-6">
+        <button class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Save</button>
+    </div>
+    {{ form_end(form) }}
+</div>

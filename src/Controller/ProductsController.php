@@ -44,6 +44,7 @@ final class ProductsController extends AbstractController
         return $this->render('products/edit.html.twig', [
             'page_type' => 'New',
             'form' => $form,
+            'product' => $product,
         ]);
     }
 
