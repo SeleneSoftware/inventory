@@ -33,6 +33,7 @@ final class ProductsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $entityManager->persist($product);
             $entityManager->flush();
 

@@ -3,6 +3,7 @@
 namespace App\Form\Type;
 
 use App\Entity\ProductAttribute;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,17 +23,20 @@ class ProductAttributeFormType extends AbstractType
         $builder = new DynamicFormBuilder($builder);
 
         $builder
-            ->add('name', ChoiceType::class, [
-                'choice_label' => function (?ProductAttribute $attribute): string {
-                    return $attribute ? strtoupper($attribute->getName()) : '';
-                },
-                'choice_value' => 'id',
+            ->add('name', EntityType::class, [
+                'class' => ProductAttribute::class,
+                'choice_label' => 'name',
+                'placeholder' => 'Please Make a Selection',
+                'choice_value' => 'name',
             ]
             )
             ->addDependent('value', 'name', function (DependentField $field, ?ProductAttribute $attribute) {
                 $field->add(ChoiceType::class, [
                     'placeholder' => null === $attribute ? 'Select an Attribute First' : 'Please Select a Value',
                     'choices' => $attribute ? $attribute->getValue() : [],
+                    'choice_label' => function ($attribute): string {
+                        return $attribute;
+                    },
                 ]);
             })
         ;
