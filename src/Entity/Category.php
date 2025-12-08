@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -24,6 +26,17 @@ class Category
 
     #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'subcategory', cascade: ['persist', 'remove'])]
     private ?self $parent = null;
+
+    /**
+     * @var Collection<int, Store>
+     */
+    #[ORM\OneToMany(targetEntity: Store::class, mappedBy: 'category')]
+    private Collection $store;
+
+    public function __construct()
+    {
+        $this->store = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -84,6 +97,36 @@ class Category
         }
 
         $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Store>
+     */
+    public function getStore(): Collection
+    {
+        return $this->store;
+    }
+
+    public function addStore(Store $store): static
+    {
+        if (!$this->store->contains($store)) {
+            $this->store->add($store);
+            $store->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStore(Store $store): static
+    {
+        if ($this->store->removeElement($store)) {
+            // set the owning side to null (unless already changed)
+            if ($store->getCategory() === $this) {
+                $store->setCategory(null);
+            }
+        }
 
         return $this;
     }
