@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Entity]
 class Category
 {
     #[ORM\Id]
@@ -16,118 +15,98 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private string $name;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $base = null;
+    // Parent category (many categories can share the same parent)
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE', nullable: true)]
+    private ?Category $parent = null;
 
-    #[ORM\OneToOne(targetEntity: self::class, inversedBy: 'parent', cascade: ['persist', 'remove'])]
-    private ?self $subcategory = null;
+    // Child categories
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    private Collection $children;
 
-    #[ORM\OneToOne(targetEntity: self::class, mappedBy: 'subcategory', cascade: ['persist', 'remove'])]
-    private ?self $parent = null;
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    private ?Store $store = null;
 
-    /**
-     * @var Collection<int, Store>
-     */
-    #[ORM\OneToMany(targetEntity: Store::class, mappedBy: 'category')]
-    private Collection $store;
 
     public function __construct()
     {
-        $this->store = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
+
+    // ------------------
+    // Getters / Setters
+    // ------------------
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function isBase(): ?bool
-    {
-        return $this->base;
-    }
-
-    public function setBase(?bool $base): static
-    {
-        $this->base = $base;
-
-        return $this;
-    }
-
-    public function getSubcategory(): ?self
-    {
-        return $this->subcategory;
-    }
-
-    public function setSubcategory(?self $subcategory): static
-    {
-        $this->subcategory = $subcategory;
-
-        return $this;
-    }
-
-    public function getParent(): ?self
+    public function getParent(): ?Category
     {
         return $this->parent;
     }
 
-    public function setParent(?self $parent): static
+    public function setParent(?Category $parent): self
     {
-        // unset the owning side of the relation if necessary
-        if ($parent === null && $this->parent !== null) {
-            $this->parent->setSubcategory(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($parent !== null && $parent->getSubcategory() !== $this) {
-            $parent->setSubcategory($this);
-        }
-
         $this->parent = $parent;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Store>
+     * @return Collection<int, Category>
      */
-    public function getStore(): Collection
+    public function getChildren(): Collection
     {
-        return $this->store;
+        return $this->children;
     }
 
-    public function addStore(Store $store): static
+    public function addChild(Category $child): self
     {
-        if (!$this->store->contains($store)) {
-            $this->store->add($store);
-            $store->setCategory($this);
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
         }
 
         return $this;
     }
 
-    public function removeStore(Store $store): static
+    public function removeChild(Category $child): self
     {
-        if ($this->store->removeElement($store)) {
-            // set the owning side to null (unless already changed)
-            if ($store->getCategory() === $this) {
-                $store->setCategory(null);
+        if ($this->children->removeElement($child)) {
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
             }
         }
 
         return $this;
     }
+
+    public function getStore(): ?Store
+    {
+        return $this->store;
+    }
+
+    public function setStore(?Store $store): static
+    {
+        $this->store = $store;
+
+        return $this;
+    }
+
 }
