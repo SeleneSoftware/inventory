@@ -1,0 +1,5 @@
+<div{{ attributes }} class="flex items-center gap-x-2">
+    {% for p in this.path %}
+        <p class="px-3 py-1 text-xs text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">{{ p }}</p>
+    {% endfor %}
+</div>
