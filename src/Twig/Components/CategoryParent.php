@@ -22,6 +22,7 @@ final class CategoryParent
 
         $current = $data['category']->getParent();
 
+        $names = [];
         while($current !== null) {
             $names[] = $current->getName();
             $current = $current->getParent();

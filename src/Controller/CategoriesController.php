@@ -46,4 +46,26 @@ final class CategoriesController extends AbstractController
             'category' => $category,
         ]);
     }
+    #[Route('/dashboard/categories/edit/{id}', name: 'app_categories_edit')]
+    public function editCategory(EntityManagerInterface $entityManager, Request $request, Category $id): Response
+    {
+        $category = $id;
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($category);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_categories');
+        }
+
+        return $this->render('categories/edit.html.twig', [
+            'page_type' => 'Edit',
+            'form' => $form,
+            'category' => $category,
+        ]);
+    }
 }
