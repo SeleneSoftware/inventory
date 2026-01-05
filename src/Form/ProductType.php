@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Product;
-use App\Entity\Store;
+use App\Entity\Category;
 use App\Form\Type\ProductAttributeFormType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -31,10 +31,10 @@ class ProductType extends AbstractType
                     'Bundle' => Product::TYPE_BUNDLE,
                 ],
             ])
-            ->add('store', EntityType::class, [
-                'class' => Store::class,
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
                 'choice_label' => 'name',
-                'multiple' => true,
+                'multiple' => false,
                 'expanded' => false,
             ])
             ->add('attributes', LiveCollectionType::class, [
