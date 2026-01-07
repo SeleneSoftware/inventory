@@ -40,11 +40,11 @@ class Product
     #[ORM\Column]
     private ?int $type = null;
 
-    /**
-     * @var Collection<int, Store>
-     */
-    #[ORM\ManyToMany(targetEntity: Store::class, inversedBy: 'products')]
-    private Collection $store;
+    // /**
+    //  * @var Collection<int, Store>
+    //  */
+    // #[ORM\ManyToMany(targetEntity: Store::class, inversedBy: 'products')]
+    // private Collection $store;
 
     #[ORM\Column(nullable: true)]
     private ?bool $status = null;
@@ -60,6 +60,10 @@ class Product
      */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'variants')]
     private Collection $parent;
+
+    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
 
     public function __construct()
     {
@@ -120,29 +124,29 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, Store>
-     */
-    public function getStore(): Collection
-    {
-        return $this->store;
-    }
-
-    public function addStore(Store $store): static
-    {
-        if (!$this->store->contains($store)) {
-            $this->store->add($store);
-        }
-
-        return $this;
-    }
-
-    public function removeStore(Store $store): static
-    {
-        $this->store->removeElement($store);
-
-        return $this;
-    }
+    // /**
+    //  * @return Collection<int, Store>
+    //  */
+    // public function getStore(): Collection
+    // {
+    //     return $this->store;
+    // }
+    //
+    // public function addStore(Store $store): static
+    // {
+    //     if (!$this->store->contains($store)) {
+    //         $this->store->add($store);
+    //     }
+    //
+    //     return $this;
+    // }
+    //
+    // public function removeStore(Store $store): static
+    // {
+    //     $this->store->removeElement($store);
+    //
+    //     return $this;
+    // }
 
     public function isStatus(): ?bool
     {
@@ -206,6 +210,18 @@ class Product
                 $parent->setVariants(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 final class ProductsController extends AbstractController
 {
-    #[Route('/products', name: 'app_products')]
+    #[Route('/dashboard/products', name: 'app_products')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(Product::class);
@@ -26,7 +26,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/products/new', name: 'app_products_new')]
+    #[Route('/dashboard/products/new', name: 'app_products_new')]
     public function newProduct(EntityManagerInterface $entityManager, Request $request): Response
     {
         $product = new Product();
@@ -49,7 +49,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/products/edit/{id}', name: 'app_products_edit')]
+    #[Route('/dashboard/products/edit/{id}', name: 'app_products_edit')]
     public function editProduct(EntityManagerInterface $entityManager, Request $request, Product $id): Response
     {
         $product = $id;
@@ -71,7 +71,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/products/deactivate/{id}', name: 'app_products_deactivate')]
+    #[Route('/dashboard/products/deactivate/{id}', name: 'app_products_deactivate')]
     public function deactivateProduct(Product $id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $id->setStatus(false);
@@ -82,7 +82,7 @@ final class ProductsController extends AbstractController
         return $this->redirectToRoute('app_products');
     }
 
-    #[Route('/products/activate/{id}', name: 'app_products_activate')]
+    #[Route('/dashboard/products/activate/{id}', name: 'app_products_activate')]
     public function activateProduct(Product $id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $id->setStatus(true);
@@ -93,7 +93,7 @@ final class ProductsController extends AbstractController
         return $this->redirectToRoute('app_products');
     }
 
-    #[Route('/products/attributes', name: 'app_products_attributes')]
+    #[Route('/dashboard/products/attributes', name: 'app_products_attributes')]
     public function productAttributes(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(ProductAttribute::class);
@@ -103,7 +103,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/products/attributes/new', name: 'app_products_attributes_new')]
+    #[Route('/dashboard/products/attributes/new', name: 'app_products_attributes_new')]
     public function newProductAttribute(EntityManagerInterface $entityManager, Request $request): Response
     {
         $product = new ProductAttribute();
@@ -126,7 +126,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/products/attributes/edit/{id}', name: 'app_products_attributes_edit')]
+    #[Route('/dashboard/products/attributes/edit/{id}', name: 'app_products_attributes_edit')]
     public function editProductAttribute(ProductAttribute $id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $product = $id;
