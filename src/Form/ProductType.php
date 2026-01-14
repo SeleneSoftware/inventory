@@ -11,18 +11,22 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
+use Symfonycasts\DynamicForms\DependentField;
+use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 class ProductType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder = new DynamicFormBuilder($builder);
         $builder
             ->add('name')
             ->add('SKU')
-            // ->add('qty') // This is for inital product development.  Since the plan is to have multiple locations for a product stock, this will be removed with location and qty in location.  Also, this really shouldn't be here, it should be added with purchase orders.
+        // ->add('qty') // This is for inital product development.  Since the plan is to have multiple locations for a product stock, this will be removed with location and qty in location.  Also, this really shouldn't be here, it should be added with purchase orders.
             ->add('type', ChoiceType::class, [
                 'expanded' => false,
                 'multiple' => false,
+                'placeholder' => 'Select Product Type',
                 'choices' => [
                     'Single' => Product::TYPE_SINGLE,
                     'Variable' => Product::TYPE_PARENT,
@@ -37,16 +41,33 @@ class ProductType extends AbstractType
                 'multiple' => false,
                 'expanded' => false,
             ])
-            ->add('attributes', LiveCollectionType::class, [
-                'entry_type' => ProductAttributeFormType::class,
-                'entry_options' => ['label' => false],
-                'label' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-            ])
-            // ->add('attributes', ProductAttributeFormType::class)
-        ;
+            ->addDependent('attributes', 'type', function (DependentField $field, ?int $product) {
+                // if (!$product){
+                //     return;
+                // }
+                // dd(Product::TYPE_SINGLE === $product);
+                if(Product::TYPE_SINGLE === $product) {
+
+                    $field->add(LiveCollectionType::class, [
+                        'entry_type' => ProductAttributeFormType::class,
+                        'entry_options' => ['label' => false],
+                        'label' => false,
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                        'by_reference' => false,
+                    ])
+                    ;
+                } elseif (Product::TYPE_PARENT === $product) {
+                    dd('Variable Product Here');
+                } elseif (Product::TYPE_VIRTUAL === $product) {
+                    dd('Virtual Product Here');
+                } elseif (Product::TYPE_SERVICE === $product) {
+                    dd('Service Product Here');
+                } elseif (Product::TYPE_BUNDLE === $product) {
+                    dd('Bundle Product Here');
+                }
+
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
