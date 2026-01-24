@@ -25,10 +25,36 @@
   /*   dark:focus:border-blue-300; */
   /*  */
 
-@safelist
-  /^(block|w-full|px-4|py-2|mt-2)$/
-  /^(text|bg|border|ring)-(gray|blue)-(200|300|400|600|700|800)$/
-  /^rounded-md$/
-  /^focus:/
-  /^dark:/;
+/* @safelist */
+/*   /^(block|w-full|px-4|py-2|mt-2)$/ */
+/*   /^(text|bg|border|ring)-(gray|blue)-(200|300|400|600|700|800)$/ */
+/*   /^rounded-md$/ */
+/*   /^focus:/ */
+/*   /^dark:/; */
+
+/* @source inline( */
+/*   "flex items-center justify-center pb-6 md:py-0 md:w-1/2 */
+/*    px-4 py-2 font-medium tracking-wide text-white capitalize */
+/*    transition-colors duration-300 transform */
+/*    bg-blue-600 rounded-lg */
+/*    hover:bg-blue-500 */
+/*    focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80" */
+/* ); */
+
+@source inline("flex");
+@source inline("items-center");
+@source inline("justify-center");
+@source inline("pb-6");
+@source inline("md:{py-0,w-1/2}");
+@source inline("px-4");
+@source inline("py-2");
+@source inline("font-medium");
+@source inline("tracking-wide");
+@source inline("text-white");
+@source inline("capitalize");
+@source inline("transition-colors");
+@source inline("duration-300");
+@source inline("transform");
+@source inline("bg-blue-600");
+@source inline("rounded-lg");
 
