@@ -2,9 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\Product;
 use App\Entity\Category;
+use App\Entity\Product;
 use App\Form\Type\ProductAttributeFormType;
+use App\Form\Type\VariantAttributesType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -42,32 +43,42 @@ class ProductType extends AbstractType
                 'expanded' => false,
             ])
             ->addDependent('attributes', 'type', function (DependentField $field, ?int $product) {
-                // if (!$product){
-                //     return;
-                // }
-                // dd(Product::TYPE_SINGLE === $product);
-                if(Product::TYPE_SINGLE === $product) {
-
-                    $field->add(LiveCollectionType::class, [
-                        'entry_type' => ProductAttributeFormType::class,
-                        'entry_options' => ['label' => false],
-                        'label' => false,
-                        'allow_add' => true,
-                        'allow_delete' => true,
-                        'by_reference' => false,
-                    ])
-                    ;
-                } elseif (Product::TYPE_PARENT === $product) {
-                    dd('Variable Product Here');
-                } elseif (Product::TYPE_VIRTUAL === $product) {
-                    dd('Virtual Product Here');
-                } elseif (Product::TYPE_SERVICE === $product) {
-                    dd('Service Product Here');
-                } elseif (Product::TYPE_BUNDLE === $product) {
-                    dd('Bundle Product Here');
+                if (Product::TYPE_SINGLE !== $product) {
+                    return;
                 }
 
-            });
+                $field->add(LiveCollectionType::class, [
+                    'entry_type' => ProductAttributeFormType::class,
+                    'entry_options' => ['label' => false],
+                    'label' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'by_reference' => false,
+                ]);
+                // } elseif (Product::TYPE_PARENT === $product) {
+                //     dd('Variable Product Here');
+                // } elseif (Product::TYPE_VIRTUAL === $product) {
+                //     dd('Virtual Product Here');
+                // } elseif (Product::TYPE_SERVICE === $product) {
+                //     dd('Service Product Here');
+                // } elseif (Product::TYPE_BUNDLE === $product) {
+                //     dd('Bundle Product Here');
+            })
+            ->addDependent('variantsAttr', 'type', function (?DependentField $field, ?int $product) {
+                if (Product::TYPE_PARENT !== $product) {
+                    return;
+                }
+                $field->add(LiveCollectionType::class, [
+                    'entry_type' => VariantAttributesType::class,
+                    'entry_options' => ['label' => false],
+                    'label' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'by_reference' => false,
+                    'mapped' => false,
+                ]);
+            })
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

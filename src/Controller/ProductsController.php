@@ -36,6 +36,7 @@ final class ProductsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            dd($form->get('variantsAttr')->getData());
             $entityManager->persist($product);
             $entityManager->flush();
 

@@ -52,15 +52,14 @@ class Product
     #[ORM\Column(type: Types::ARRAY)]
     private array $attributes = [];
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'variants')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?self $parent = null;
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
+    private ?self $variants = null;
 
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
-    private Collection $variants;
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'variants')]
+    private Collection $parent;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
@@ -69,7 +68,7 @@ class Product
     public function __construct()
     {
         $this->store = new ArrayCollection();
-        $this->variants = new ArrayCollection();
+        $this->parent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,47 +172,47 @@ class Product
         return $this;
     }
 
-    // public function getVariants(): ?self
-    // {
-    //     return $this->variants;
-    // }
-    //
-    // public function setVariants(?self $variants): static
-    // {
-    //     $this->variants = $variants;
-    //
-    //     return $this;
-    // }
-    //
-    // /**
-    //  * @return Collection<int, self>
-    //  */
-    // public function getParent(): Collection
-    // {
-    //     return $this->parent;
-    // }
-    //
-    // public function addParent(self $parent): static
-    // {
-    //     if (!$this->parent->contains($parent)) {
-    //         $this->parent->add($parent);
-    //         $parent->setVariants($this);
-    //     }
-    //
-    //     return $this;
-    // }
-    //
-    // public function removeParent(self $parent): static
-    // {
-    //     if ($this->parent->removeElement($parent)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($parent->getVariants() === $this) {
-    //             $parent->setVariants(null);
-    //         }
-    //     }
-    //
-    //     return $this;
-    // }
+    public function getVariants(): ?self
+    {
+        return $this->variants;
+    }
+
+    public function setVariants(?self $variants): static
+    {
+        $this->variants = $variants;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getParent(): Collection
+    {
+        return $this->parent;
+    }
+
+    public function addParent(self $parent): static
+    {
+        if (!$this->parent->contains($parent)) {
+            $this->parent->add($parent);
+            $parent->setVariants($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParent(self $parent): static
+    {
+        if ($this->parent->removeElement($parent)) {
+            // set the owning side to null (unless already changed)
+            if ($parent->getVariants() === $this) {
+                $parent->setVariants(null);
+            }
+        }
+
+        return $this;
+    }
 
     public function getCategory(): ?Category
     {
@@ -223,55 +222,6 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
-
-        return $this;
-    }
-
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?self $parent): self
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getVariants(): Collection
-    {
-        return $this->variants;
-    }
-
-    public function addVariant(?self $variant): self
-    {
-        if (is_array($variant)) {
-            foreach ($variant as $v) {
-                if ($v instanceof self) {
-                    $this->variants->add($variant);
-                    $variant->setParent($this);
-                }
-            }
-        }
-        if (!$this->variants->contains($variant)) {
-            $this->variants->add($variant);
-            $variant->setParent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVariant(self $variant): self
-    {
-        if ($this->variants->removeElement($variant)) {
-            if ($variant->getParent() === $this) {
-                $variant->setParent(null);
-            }
-        }
 
         return $this;
     }
