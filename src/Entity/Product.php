@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Product
 {
     public const TYPE_SINGLE = 0;
@@ -31,8 +32,8 @@ class Product
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $SKU = null;
+    #[ORM\Column(type: 'bigint', unique: true)]
+    private ?string $sku = null; // string avoids PHP int overflow
 
     #[ORM\Column(nullable: true)]
     private ?int $qty = null;
@@ -89,14 +90,25 @@ class Product
         return $this;
     }
 
+    #[ORM\PrePersist]
+    public function generateSku(): void
+    {
+        if (null !== $this->sku) {
+            return;
+        }
+
+        // 12-digit numeric SKU
+        $this->sku = (string) random_int(100000000000, 999999999999);
+    }
+
     public function getSKU(): ?string
     {
-        return $this->SKU;
+        return $this->sku;
     }
 
     public function setSKU(string $SKU): static
     {
-        $this->SKU = $SKU;
+        $this->sku = $SKU;
 
         return $this;
     }
@@ -171,6 +183,15 @@ class Product
         $this->attributes = $attributes;
 
         return $this;
+    }
+
+    public function addAttribute(ProductAttribute $attribute, string $value): void
+    {
+        $this->attributes[] = [
+            'name' => $attribute,
+            'value' => $value,
+        ];
+
     }
 
     // public function getVariants(): ?self
