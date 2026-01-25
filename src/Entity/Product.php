@@ -24,6 +24,16 @@ class Product
 
     public const TYPE_BUNDLE = 5;
 
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_INACTIVE = 2;
+
+    public const STATUS_LIQUIDATION = 3;
+
+    public const STATUS_CLEARANCE = 4;
+
+    public const STATUS_PROMOTIONAL = 5;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -41,15 +51,6 @@ class Product
     #[ORM\Column]
     private ?int $type = null;
 
-    // /**
-    //  * @var Collection<int, Store>
-    //  */
-    // #[ORM\ManyToMany(targetEntity: Store::class, inversedBy: 'products')]
-    // private Collection $store;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $status = null;
-
     #[ORM\Column(type: Types::ARRAY)]
     private array $attributes = [];
 
@@ -66,6 +67,12 @@ class Product
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column]
+    private ?int $status = self::STATUS_INACTIVE;
 
     public function __construct()
     {
@@ -137,42 +144,6 @@ class Product
         return $this;
     }
 
-    // /**
-    //  * @return Collection<int, Store>
-    //  */
-    // public function getStore(): Collection
-    // {
-    //     return $this->store;
-    // }
-    //
-    // public function addStore(Store $store): static
-    // {
-    //     if (!$this->store->contains($store)) {
-    //         $this->store->add($store);
-    //     }
-    //
-    //     return $this;
-    // }
-    //
-    // public function removeStore(Store $store): static
-    // {
-    //     $this->store->removeElement($store);
-    //
-    //     return $this;
-    // }
-
-    public function isStatus(): ?bool
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?bool $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -193,48 +164,6 @@ class Product
         ];
 
     }
-
-    // public function getVariants(): ?self
-    // {
-    //     return $this->variants;
-    // }
-    //
-    // public function setVariants(?self $variants): static
-    // {
-    //     $this->variants = $variants;
-    //
-    //     return $this;
-    // }
-    //
-    // /**
-    //  * @return Collection<int, self>
-    //  */
-    // public function getParent(): Collection
-    // {
-    //     return $this->parent;
-    // }
-    //
-    // public function addParent(self $parent): static
-    // {
-    //     if (!$this->parent->contains($parent)) {
-    //         $this->parent->add($parent);
-    //         $parent->setVariants($this);
-    //     }
-    //
-    //     return $this;
-    // }
-    //
-    // public function removeParent(self $parent): static
-    // {
-    //     if ($this->parent->removeElement($parent)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($parent->getVariants() === $this) {
-    //             $parent->setVariants(null);
-    //         }
-    //     }
-    //
-    //     return $this;
-    // }
 
     public function getCategory(): ?Category
     {
@@ -293,6 +222,30 @@ class Product
                 $variant->setParent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

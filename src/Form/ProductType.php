@@ -22,8 +22,7 @@ class ProductType extends AbstractType
         $builder = new DynamicFormBuilder($builder);
         $builder
             ->add('name')
-            ->add('SKU')
-        // ->add('qty') // This is for inital product development.  Since the plan is to have multiple locations for a product stock, this will be removed with location and qty in location.  Also, this really shouldn't be here, it should be added with purchase orders.
+            // ->add('SKU')
             ->add('type', ChoiceType::class, [
                 'expanded' => false,
                 'multiple' => false,
@@ -31,9 +30,10 @@ class ProductType extends AbstractType
                 'choices' => [
                     'Single' => Product::TYPE_SINGLE,
                     'Variable' => Product::TYPE_PARENT,
-                    'Virtual' => Product::TYPE_VIRTUAL,
-                    'Service' => Product::TYPE_SERVICE,
-                    'Bundle' => Product::TYPE_BUNDLE,
+                    // these are to remain commented until the logic for them comences.
+                    // 'Virtual' => Product::TYPE_VIRTUAL,
+                    // 'Service' => Product::TYPE_SERVICE,
+                    // 'Bundle' => Product::TYPE_BUNDLE,
                 ],
             ])
             ->add('category', EntityType::class, [
@@ -55,14 +55,6 @@ class ProductType extends AbstractType
                     'allow_delete' => true,
                     'by_reference' => false,
                 ]);
-                // } elseif (Product::TYPE_PARENT === $product) {
-                //     dd('Variable Product Here');
-                // } elseif (Product::TYPE_VIRTUAL === $product) {
-                //     dd('Virtual Product Here');
-                // } elseif (Product::TYPE_SERVICE === $product) {
-                //     dd('Service Product Here');
-                // } elseif (Product::TYPE_BUNDLE === $product) {
-                //     dd('Bundle Product Here');
             })
             ->addDependent('variantsAttr', 'type', function (?DependentField $field, ?int $product) {
                 if (Product::TYPE_PARENT !== $product) {
