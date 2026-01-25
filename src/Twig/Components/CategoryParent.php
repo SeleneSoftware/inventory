@@ -2,8 +2,8 @@
 
 namespace App\Twig\Components;
 
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use App\Entity\Category;
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\PreMount;
 
 #[AsTwigComponent]
@@ -23,7 +23,7 @@ final class CategoryParent
         $current = $data['category']->getParent();
 
         $names = [];
-        while($current !== null) {
+        while (null !== $current) {
             $names[] = $current->getName();
             $current = $current->getParent();
         }
@@ -32,5 +32,4 @@ final class CategoryParent
 
         return [];
     }
-
 }

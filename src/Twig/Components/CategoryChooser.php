@@ -1,6 +1,5 @@
 <?php
 
-
 /*
  * This file is part of the Symfony package.
  *
@@ -30,5 +29,3 @@ class CategoryChooser extends AbstractController
         return $this->createForm(CategoryType::class);
     }
 }
-
-?>
