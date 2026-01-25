@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[IsGranted('ROLE_USER')]
 final class ProductsController extends AbstractController
@@ -36,7 +37,12 @@ final class ProductsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            dd($form->get('variantsAttr')->getData());
+            if (Product::TYPE_PARENT === $product->getType()) {
+                $slugger = new AsciiSlugger();
+                $attr = $form->get('variantsAttr')->getData();
+                dd($attr);
+            }
+
             $entityManager->persist($product);
             $entityManager->flush();
 
