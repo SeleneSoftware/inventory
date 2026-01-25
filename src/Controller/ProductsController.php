@@ -21,6 +21,7 @@ final class ProductsController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(Product::class);
+        // dd($repo->findAll());
 
         return $this->render('products/index.html.twig', [
             'products' => $repo->findAll(),
@@ -37,14 +38,47 @@ final class ProductsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if (Product::TYPE_PARENT === $product->getType()) {
-                $slugger = new AsciiSlugger();
-                $attr = $form->get('variantsAttr')->getData();
-                dd($attr);
+            if (null === $product->getSKU()) {
+                $product->generateSku();
+                // dd($product);
             }
 
-            $entityManager->persist($product);
-            $entityManager->flush();
+            if (Product::TYPE_PARENT === $product->getType()) {
+                $slugger = new AsciiSlugger();
+                $attributes = $form->get('variantsAttr')->getData();
+
+                $products = [];
+
+                $combinations = $this->generateCombinations($attributes);
+
+                foreach ($combinations as $combination) {
+                    $vProduct = new Product();
+
+                    // Build product name
+                    $nameParts = [];
+
+                    foreach ($combination as $item) {
+                        $attribute = $item['attribute'];
+                        $value = $item['value'];
+
+                        $vProduct->addAttribute($attribute, $value);
+                        $nameParts[] = $value;
+                    }
+
+                    $vProduct->setName(implode('-', $nameParts))
+                             ->setType(Product::TYPE_VARIANT)
+                         ->setCategory($product->getCategory())
+                    ;
+
+                    // $products[] = $product;
+                    $entityManager->persist($vProduct);
+                    $entityManager->flush();
+                }
+            }
+            if (Product::TYPE_SINGLE === $product->getType()) {
+                $entityManager->persist($product);
+                $entityManager->flush();
+            }
 
             return $this->redirectToRoute('app_products');
         }
@@ -54,6 +88,30 @@ final class ProductsController extends AbstractController
             'form' => $form,
             'product' => $product,
         ]);
+    }
+
+    protected function generateCombinations(array $attributes): array
+    {
+        $result = [[]];
+
+        foreach ($attributes as $attribute) {
+            $new = [];
+
+            foreach ($result as $combo) {
+                foreach ($attribute['values'] as $value) {
+                    $newCombo = $combo;
+                    $newCombo[] = [
+                        'attribute' => $attribute['variant'],
+                        'value' => $value,
+                    ];
+                    $new[] = $newCombo;
+                }
+            }
+
+            $result = $new;
+        }
+
+        return $result;
     }
 
     #[Route('/dashboard/products/edit/{id}', name: 'app_products_edit')]
