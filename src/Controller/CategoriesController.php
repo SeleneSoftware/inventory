@@ -46,6 +46,7 @@ final class CategoriesController extends AbstractController
             'category' => $category,
         ]);
     }
+
     #[Route('/dashboard/categories/edit/{id}', name: 'app_categories_edit')]
     public function editCategory(EntityManagerInterface $entityManager, Request $request, Category $id): Response
     {

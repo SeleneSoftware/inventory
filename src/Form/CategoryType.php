@@ -4,13 +4,12 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\Store;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfonycasts\DynamicForms\DependentField;
-use Doctrine\ORM\EntityRepository;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 class CategoryType extends AbstractType
@@ -26,7 +25,7 @@ class CategoryType extends AbstractType
                 'choice_label' => 'name',
                 'placeholder' => 'Choose One',
             ])
-            ->addDependent('parent', 'store', function (dependentField $field, ?Store $store) {
+            ->addDependent('parent', 'store', function (DependentField $field, ?Store $store) {
                 $field->add(EntityType::class, [
                     'class' => Category::class,
                     'query_builder' => function (EntityRepository $er) use ($store) {
@@ -36,7 +35,7 @@ class CategoryType extends AbstractType
                     },
                     'choice_label' => 'name',
                     'placeholder' => 'Choose One',
-                    'required'=>false,
+                    'required' => false,
                 ])
                 ;
 
