@@ -74,10 +74,17 @@ class Product
     #[ORM\Column]
     private ?int $status = self::STATUS_INACTIVE;
 
+    /**
+     * @var Collection<int, Image>
+     */
+    #[ORM\ManyToMany(targetEntity: Image::class, cascade: ['persist'])]
+    private Collection $productImages;
+
     public function __construct()
     {
         $this->store = new ArrayCollection();
         $this->variants = new ArrayCollection();
+        $this->productImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -246,6 +253,30 @@ class Product
     public function setStatus(int $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getProductImages(): Collection
+    {
+        return $this->productImages;
+    }
+
+    public function addProductImage(Image $productImage): static
+    {
+        if (!$this->productImages->contains($productImage)) {
+            $this->productImages->add($productImage);
+        }
+
+        return $this;
+    }
+
+    public function removeProductImage(Image $productImage): static
+    {
+        $this->productImages->removeElement($productImage);
 
         return $this;
     }

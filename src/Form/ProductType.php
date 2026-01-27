@@ -9,8 +9,10 @@ use App\Form\Type\VariantAttributesType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\UX\Dropzone\Form\DropzoneType;
 use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
@@ -22,7 +24,7 @@ class ProductType extends AbstractType
         $builder = new DynamicFormBuilder($builder);
         $builder
             ->add('name')
-            // ->add('SKU')
+        // ->add('SKU')
             ->add('type', ChoiceType::class, [
                 'expanded' => false,
                 'multiple' => false,
@@ -41,6 +43,14 @@ class ProductType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => false,
                 'expanded' => false,
+            ])
+            ->add('description', TextareaType::class)
+            ->add('images', DropzoneType::class, [
+                'mapped' => false,
+                'multiple' => true,
+                'attr' => [
+                    'data-controller' => 'symfony--ux-dropzone--dropzone',
+                ],
             ])
             ->addDependent('attributes', 'type', function (DependentField $field, ?int $product) {
                 if (Product::TYPE_SINGLE !== $product) {

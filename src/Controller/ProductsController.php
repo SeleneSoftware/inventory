@@ -6,6 +6,7 @@ use App\Entity\Product;
 use App\Entity\ProductAttribute;
 use App\Form\ProductAttributeType;
 use App\Form\ProductType;
+use App\Helpers\ImageUploaderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,6 @@ final class ProductsController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(Product::class);
-        // dd($repo->findAll());
 
         return $this->render('products/index.html.twig', [
             'products' => $repo->findAll(),
@@ -29,7 +29,7 @@ final class ProductsController extends AbstractController
     }
 
     #[Route('/dashboard/products/new', name: 'app_products_new')]
-    public function newProduct(EntityManagerInterface $entityManager, Request $request): Response
+    public function newProduct(EntityManagerInterface $entityManager, Request $request, ImageUploaderInterface $uploader): Response
     {
         $product = new Product();
         $form = $this->createForm(ProductType::class, $product);
@@ -37,10 +37,9 @@ final class ProductsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            // dd($form->get('images')->getData());
             if (null === $product->getSKU()) {
                 $product->generateSku();
-                // dd($product);
             }
 
             if (Product::TYPE_PARENT === $product->getType()) {
@@ -76,6 +75,10 @@ final class ProductsController extends AbstractController
                 }
             }
             if (Product::TYPE_SINGLE === $product->getType()) {
+                foreach ($form->get('images')->getData() as $i) {
+                    $image = $uploader->parseUploadedFile($i);
+                    $product->addProductImage($image);
+                }
                 $entityManager->persist($product);
                 $entityManager->flush();
             }
@@ -83,7 +86,7 @@ final class ProductsController extends AbstractController
             return $this->redirectToRoute('app_products');
         }
 
-        return $this->render('products/edit.html.twig', [
+        return $this->render('products/new.html.twig', [
             'page_type' => 'New',
             'form' => $form,
             'product' => $product,
