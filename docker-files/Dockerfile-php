@@ -1,0 +1,53 @@
+FROM docker.io/library/php:8.4-fpm
+
+ENV PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig"
+
+
+# Configure PHP-FPM logging
+RUN mkdir -p /var/log/php && chown -R www-data:www-data /var/log/php
+
+# Configure PHP settings
+RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/custom.ini && \
+    echo "upload_max_filesize = 200M" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "post_max_size = 256M" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "log_errors = On" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "error_log = /var/log/php/error.log" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "extension = pdo_mysql.so" >> /usr/local/etc/php/conf.d/custom.ini
+
+# Configure PHP-FPM logging
+# RUN sed -i 's|;error_log = log/php-fpm.log|error_log = /var/log/php/fpm-error.log|' /usr/local/etc/php-fpm.conf.default && \
+#     cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
+RUN sed -i 's|;error_log = log/php-fpm.log|error_log = /var/log/php/fpm-error.log|' /usr/local/etc/php-fpm.conf.default && \
+    sed -i 's|^;*include=.*|include=/usr/local/etc/php-fpm.d/*.conf|' /usr/local/etc/php-fpm.conf.default && \
+    cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.conf
+
+
+# Set correct permissions
+RUN touch /var/log/php/error.log /var/log/php/fpm-error.log && \
+    chown www-data:www-data /var/log/php/error.log /var/log/php/fpm-error.log
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    zlib1g-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    libicu-dev \
+    libz-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    libavif-dev \
+    pkg-config \
+    && dpkg -l | grep -E "zlib1g-dev|libfreetype6-dev|libjpeg62-turbo-dev|libpng-dev|libzip-dev|libicu-dev|libz-dev|libjpeg-dev|libwebp-dev|libavif-dev|pkg-config" \
+    && docker-php-ext-configure gd --with-freetype --with-webp --with-jpeg \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j$(nproc) gd intl exif pdo pdo_mysql mysqli zip \
+    && docker-php-ext-enable pdo pdo_mysql \
+    && rm -rf /var/lib/apt/lists/*
+
+# Expose log directory (optional, for volume mounting)
+VOLUME ["/var/log/php"]
+
+CMD ["php-fpm"]
+
