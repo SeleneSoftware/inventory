@@ -7,12 +7,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx:/etc/nginx
+      - ./docker-files/nginx:/etc/nginx
       - ./:/var/www:rw
       - ./var/cache/nginx:/var/cache/nginx
       - ./var/log/nginx:/var/log/nginx
-      - ./certbot/conf/:/etc/nginx/ssl/:rw
-      - ./certbot/www/:/var/www/certbot/:ro
+      - ./docker-files/certbot/conf/:/etc/nginx/ssl/:rw
+      - ./docker-files/certbot/www/:/var/www/certbot/:ro
     depends_on:
       - certbot
       - php
@@ -25,14 +25,14 @@ services:
     container_name: symfony_certbot
     image: docker.io/certbot/certbot:latest
     volumes:
-      - ./certbot/www/:/var/www/certbot/:rw
-      - ./certbot/conf/:/etc/letsencrypt/:rw
-      - ./var/log/letsencrypt:/var/log/letsencrypt
+      - ./docker-files/certbot/www/:/var/www/certbot/:rw
+      - ./docker-files/certbot/conf/:/etc/letsencrypt/:rw
+       ./var/log/letsencrypt:/var/log/letsencrypt
 
   php:
     container_name: symfony_php
     build:
-      context: ./docker-file
+      context: ./docker-files
       dockerfile: ./Dockerfile-php
     volumes:
       - ./:/var/www:rw
@@ -55,15 +55,15 @@ services:
       MARIADB_USER: symfony
       MARIADB_PASSWORD: symfony
     volumes:
-      - ./mariadb_logs:/var/log/mysql
-      - ./mariadb_data:/var/lib/mysql
-      - ./mariadb/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+      - ./var/log/mariadb_logs:/var/log/mysql
+      - ./docker-files/mariadb_data:/var/lib/mysql
+      - ./docker-files/mariadb/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     ports:
       - "3306:3306"
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p$MARIADB_ROOT_PASSWORD"]
       interval: 10s
       retries: 5
       timeout: 5s
@@ -79,13 +79,13 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m -Des.cgroups.hierarchy.override=/ -XX:-UseContainerSupport
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - es_data:/usr/share/elasticsearch/data
+      - ./docker-files/es_data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
     networks:
       - app-network
     restart: unless-stopped
-    cgroupns: host
+    # cgroupns: host
 
 ## I couldn't get this to work properly, maybe someone else can help with that
   # mercure:
