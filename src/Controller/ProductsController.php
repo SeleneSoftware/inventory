@@ -37,7 +37,7 @@ final class ProductsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dd($form->get('images')->getData());
+            // dd($form->get('images')->getData());
             if (null === $product->getSKU()) {
                 $product->generateSku();
             }
