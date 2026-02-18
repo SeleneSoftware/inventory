@@ -1,4 +1,5 @@
 .php-cs-fixer.cache
+docker-files/mariadb_data/
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -21,3 +22,5 @@ yarn-error.log
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+

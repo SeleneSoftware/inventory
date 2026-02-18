@@ -25,8 +25,8 @@ services:
     container_name: symfony_certbot
     image: docker.io/certbot/certbot:latest
     volumes:
-      - ./docker-files/certbot/www/:/var/www/certbot/:rw
-      - ./docker-files/certbot/conf/:/etc/letsencrypt/:rw
+      - ./docker-files/certbot/www/:/var/www/certbot/
+      - ./docker-files/certbot/conf/:/etc/letsencrypt/
        ./var/log/letsencrypt:/var/log/letsencrypt
 
   php:
