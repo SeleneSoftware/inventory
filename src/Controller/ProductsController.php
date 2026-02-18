@@ -18,7 +18,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 #[IsGranted('ROLE_USER')]
 final class ProductsController extends AbstractController
 {
-    #[Route('/dashboard/products', name: 'app_products')]
+    #[Route('/products', name: 'app_products')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(Product::class);
@@ -28,7 +28,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/products/new', name: 'app_products_new')]
+    #[Route('/products/new', name: 'app_products_new')]
     public function newProduct(EntityManagerInterface $entityManager, Request $request, ImageUploaderInterface $uploader): Response
     {
         $product = new Product();
@@ -66,16 +66,16 @@ final class ProductsController extends AbstractController
 
                     $vProduct->setName(implode('-', $nameParts))
                              ->setType(Product::TYPE_VARIANT)
-                         ->setCategory($product->getCategory())
+                             ->setCategory($product->getCategory())
                     ;
 
-                    // $products[] = $product;
                     $entityManager->persist($vProduct);
                     $entityManager->flush();
                 }
             }
             if (Product::TYPE_SINGLE === $product->getType()) {
                 foreach ($form->get('images')->getData() as $i) {
+                    $uploader->setOwner($this->getUser());
                     $image = $uploader->parseUploadedFile($i);
                     $product->addProductImage($image);
                 }
@@ -117,7 +117,7 @@ final class ProductsController extends AbstractController
         return $result;
     }
 
-    #[Route('/dashboard/products/edit/{id}', name: 'app_products_edit')]
+    #[Route('/products/edit/{id}', name: 'app_products_edit')]
     public function editProduct(EntityManagerInterface $entityManager, Request $request, Product $id): Response
     {
         $product = $id;
@@ -139,7 +139,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/products/deactivate/{id}', name: 'app_products_deactivate')]
+    #[Route('/products/deactivate/{id}', name: 'app_products_deactivate')]
     public function deactivateProduct(Product $id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $id->setStatus(false);
@@ -150,7 +150,7 @@ final class ProductsController extends AbstractController
         return $this->redirectToRoute('app_products');
     }
 
-    #[Route('/dashboard/products/activate/{id}', name: 'app_products_activate')]
+    #[Route('/products/activate/{id}', name: 'app_products_activate')]
     public function activateProduct(Product $id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $id->setStatus(true);
@@ -161,7 +161,7 @@ final class ProductsController extends AbstractController
         return $this->redirectToRoute('app_products');
     }
 
-    #[Route('/dashboard/products/attributes', name: 'app_products_attributes')]
+    #[Route('/products/attributes', name: 'app_products_attributes')]
     public function productAttributes(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(ProductAttribute::class);
@@ -171,7 +171,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/products/attributes/new', name: 'app_products_attributes_new')]
+    #[Route('/products/attributes/new', name: 'app_products_attributes_new')]
     public function newProductAttribute(EntityManagerInterface $entityManager, Request $request): Response
     {
         $product = new ProductAttribute();
@@ -194,7 +194,7 @@ final class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/products/attributes/edit/{id}', name: 'app_products_attributes_edit')]
+    #[Route('/products/attributes/edit/{id}', name: 'app_products_attributes_edit')]
     public function editProductAttribute(ProductAttribute $id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $product = $id;

@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Entity\Image;
+use App\Entity\User;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -18,7 +19,17 @@ class ImageUploader implements ImageUploaderInterface
     ) {
     }
 
-    public function parseUploadedFile(UploadedFile $file): Image
+    public function setOwner(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function getName(): string
+    {
+        return 'Filesystem Uploader';
+    }
+
+    public function parseUploadedFile(UploadedFile $file, ?string $alt = null): Image
     {
         $image = new Image();
         try {
@@ -38,9 +49,15 @@ class ImageUploader implements ImageUploaderInterface
             $file->move($this->getTargetDirectory(), $fileName);
             $image->setPath($this->getTargetDirectory())
                   ->setName($safeFilename)
-                  ->setAlt($safeFilename)
+                  ->setAlt($alt ?: $safeFilename)
                   ->setFilename($fileName)
                   ->setMime($mime)
+                  ->setSlug($safeFilename)
+                  ->setUrl($this->targetDirectory.'/'.$fileName)
+                  ->setDateUploaded(new \DateTimeImmutable())
+                  ->setLastUpdated(new \DateTime())
+                  ->setUploadedBy($this->user)
+                  // ->setFileSize($file->getSize())
             ;
         } catch (FileException $e) {
             throw new \Exception(sprintf('An error occurred while saving file: %s', $e->getMessage()));
@@ -51,11 +68,6 @@ class ImageUploader implements ImageUploaderInterface
 
     public function getTargetDirectory(): string
     {
-        // dd(getcwd());
-
         return getcwd().'/'.$this->targetDirectory;
-        // $publicDir = $this->getParameter('kernel.project_dir').'/public';
-
-        // return $publicDir.'/'.$this->targetDirectory;
     }
 }

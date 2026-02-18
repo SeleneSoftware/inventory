@@ -1,0 +1,9 @@
+{% extends 'base.dashboard.html.twig' %}
+
+{% block title %}Media Settings{% endblock %}
+
+    {% block main %}
+        <section class="container px-4 mx-auto">
+            <twig:ImageModal :imageList="images" />
+        </section>
+    {% endblock %}

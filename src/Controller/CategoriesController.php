@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 final class CategoriesController extends AbstractController
 {
-    #[Route('/dashboard/categories', name: 'app_categories')]
+    #[Route('/categories', name: 'app_categories')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $repo = $entityManager->getRepository(Category::class);
@@ -24,7 +24,7 @@ final class CategoriesController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/categories/new', name: 'app_categories_new')]
+    #[Route('/categories/new', name: 'app_categories_new')]
     public function newCategory(EntityManagerInterface $entityManager, Request $request): Response
     {
         $category = new Category();
@@ -47,7 +47,7 @@ final class CategoriesController extends AbstractController
         ]);
     }
 
-    #[Route('/dashboard/categories/edit/{id}', name: 'app_categories_edit')]
+    #[Route('/categories/edit/{id}', name: 'app_categories_edit')]
     public function editCategory(EntityManagerInterface $entityManager, Request $request, Category $id): Response
     {
         $category = $id;

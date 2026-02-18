@@ -28,6 +28,10 @@ final class Sidebar
                 'path' => 'app_categories',
             ],
             [
+                'name' => 'Images',
+                'path' => 'app_media',
+            ],
+            [
                 'name' => 'Product Attributes',
                 'path' => 'app_products_attributes',
             ],
