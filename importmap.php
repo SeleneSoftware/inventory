@@ -26,9 +26,9 @@ return [
         'version' => '3.2.2',
     ],
     '@hotwired/turbo' => [
-        'version' => '8.0.20',
+        'version' => '8.0.23',
     ],
     'alpinejs' => [
-        'version' => '3.15.2',
+        'version' => '3.15.8',
     ],
 ];
