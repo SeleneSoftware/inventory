@@ -80,6 +80,12 @@ class Product
     #[ORM\ManyToMany(targetEntity: Image::class, cascade: ['persist'])]
     private Collection $productImages;
 
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $addAttributes = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $liqudation = null;
+
     public function __construct()
     {
         $this->store = new ArrayCollection();
@@ -277,6 +283,30 @@ class Product
     public function removeProductImage(Image $productImage): static
     {
         $this->productImages->removeElement($productImage);
+
+        return $this;
+    }
+
+    public function getAddAttributes(): ?array
+    {
+        return $this->addAttributes;
+    }
+
+    public function setAddAttributes(?array $addAttributes): static
+    {
+        $this->addAttributes = $addAttributes;
+
+        return $this;
+    }
+
+    public function isLiqudation(): ?bool
+    {
+        return $this->liqudation;
+    }
+
+    public function setLiqudation(?bool $liqudation): static
+    {
+        $this->liqudation = $liqudation;
 
         return $this;
     }
