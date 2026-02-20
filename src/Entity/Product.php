@@ -86,6 +86,12 @@ class Product
     #[ORM\Column(nullable: true)]
     private ?bool $liqudation = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $modelNumber = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $upc = null;
+
     public function __construct()
     {
         $this->store = new ArrayCollection();
@@ -307,6 +313,30 @@ class Product
     public function setLiqudation(?bool $liqudation): static
     {
         $this->liqudation = $liqudation;
+
+        return $this;
+    }
+
+    public function getModelNumber(): ?string
+    {
+        return $this->modelNumber;
+    }
+
+    public function setModelNumber(?string $modelNumber): static
+    {
+        $this->modelNumber = $modelNumber;
+
+        return $this;
+    }
+
+    public function getUpc(): ?string
+    {
+        return $this->upc;
+    }
+
+    public function setUpc(?string $upc): static
+    {
+        $this->upc = $upc;
 
         return $this;
     }
