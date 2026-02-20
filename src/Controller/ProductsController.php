@@ -64,13 +64,20 @@ final class ProductsController extends AbstractController
                         $nameParts[] = $value;
                     }
 
-                    $vProduct->setName(implode('-', $nameParts))
+                    $vProduct->setName($product->getName().'-'.implode('-', $nameParts))
                              ->setType(Product::TYPE_VARIANT)
                              ->setCategory($product->getCategory())
                     ;
+                    // $product->addVariant($vProduct);
+                    $vProduct->setParent($product);
 
                     $entityManager->persist($vProduct);
                     $entityManager->flush();
+                }
+                foreach ($form->get('images')->getData() as $i) {
+                    $uploader->setOwner($this->getUser());
+                    $image = $uploader->parseUploadedFile($i);
+                    $product->addProductImage($image);
                 }
             }
             if (Product::TYPE_SINGLE === $product->getType()) {
@@ -79,9 +86,9 @@ final class ProductsController extends AbstractController
                     $image = $uploader->parseUploadedFile($i);
                     $product->addProductImage($image);
                 }
-                $entityManager->persist($product);
-                $entityManager->flush();
             }
+            $entityManager->persist($product);
+            $entityManager->flush();
 
             return $this->redirectToRoute('app_products');
         }

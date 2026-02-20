@@ -54,14 +54,14 @@ class Product
     #[ORM\Column(type: Types::ARRAY)]
     private array $attributes = [];
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'variants')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'variants', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?self $parent = null;
 
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist'])]
     private Collection $variants;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
