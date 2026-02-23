@@ -1,4 +1,6 @@
 .php-cs-fixer.cache
+docker-files/mariadb_data/
+docker-files/certbot/
 
 ###> symfony/framework-bundle ###
 /.env.local
