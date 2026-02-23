@@ -11,6 +11,8 @@
         "doctrine/doctrine-bundle": "^2.18.2",
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6.2",
+        "overblog/graphiql-bundle": "^1.0",
+        "overblog/graphql-bundle": "^1.9",
         "paragonie/sodium_compat": "^2.5",
         "symfony/console": "7.3.*",
         "symfony/dotenv": "7.3.*",
