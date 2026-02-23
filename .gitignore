@@ -23,4 +23,9 @@ yarn-error.log
 /assets/vendor/
 ###< symfony/asset-mapper ###
 
-
+###> stuff ###
+public/upload/*
+public/upload/images/*
+!public/upload/.gitignore
+!public/upload/images/.gitignore
+###< stuff ###

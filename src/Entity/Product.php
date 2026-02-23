@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Product
 {
     public const TYPE_SINGLE = 0;
@@ -23,6 +24,16 @@ class Product
 
     public const TYPE_BUNDLE = 5;
 
+    public const STATUS_ACTIVE = 1;
+
+    public const STATUS_INACTIVE = 2;
+
+    public const STATUS_LIQUIDATION = 3;
+
+    public const STATUS_CLEARANCE = 4;
+
+    public const STATUS_PROMOTIONAL = 5;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -31,8 +42,8 @@ class Product
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $SKU = null;
+    #[ORM\Column(type: 'bigint', unique: true)]
+    private ?string $sku = null; // string avoids PHP int overflow
 
     #[ORM\Column(nullable: true)]
     private ?int $qty = null;
@@ -40,35 +51,52 @@ class Product
     #[ORM\Column]
     private ?int $type = null;
 
-    // /**
-    //  * @var Collection<int, Store>
-    //  */
-    // #[ORM\ManyToMany(targetEntity: Store::class, inversedBy: 'products')]
-    // private Collection $store;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $status = null;
-
     #[ORM\Column(type: Types::ARRAY)]
     private array $attributes = [];
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'parent')]
-    private ?self $variants = null;
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'variants', cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?self $parent = null;
 
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'variants')]
-    private Collection $parent;
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist'])]
+    private Collection $variants;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column]
+    private ?int $status = self::STATUS_INACTIVE;
+
+    /**
+     * @var Collection<int, Image>
+     */
+    #[ORM\ManyToMany(targetEntity: Image::class, cascade: ['persist'])]
+    private Collection $productImages;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $addAttributes = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $liqudation = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $modelNumber = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $upc = null;
+
     public function __construct()
     {
         $this->store = new ArrayCollection();
-        $this->parent = new ArrayCollection();
+        $this->variants = new ArrayCollection();
+        $this->productImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,14 +116,25 @@ class Product
         return $this;
     }
 
+    #[ORM\PrePersist]
+    public function generateSku(): void
+    {
+        if (null !== $this->sku) {
+            return;
+        }
+
+        // 12-digit numeric SKU
+        $this->sku = (string) random_int(100000000000, 999999999999);
+    }
+
     public function getSKU(): ?string
     {
-        return $this->SKU;
+        return $this->sku;
     }
 
     public function setSKU(string $SKU): static
     {
-        $this->SKU = $SKU;
+        $this->sku = $SKU;
 
         return $this;
     }
@@ -124,42 +163,6 @@ class Product
         return $this;
     }
 
-    // /**
-    //  * @return Collection<int, Store>
-    //  */
-    // public function getStore(): Collection
-    // {
-    //     return $this->store;
-    // }
-    //
-    // public function addStore(Store $store): static
-    // {
-    //     if (!$this->store->contains($store)) {
-    //         $this->store->add($store);
-    //     }
-    //
-    //     return $this;
-    // }
-    //
-    // public function removeStore(Store $store): static
-    // {
-    //     $this->store->removeElement($store);
-    //
-    //     return $this;
-    // }
-
-    public function isStatus(): ?bool
-    {
-        return $this->status;
-    }
-
-    public function setStatus(?bool $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -172,46 +175,13 @@ class Product
         return $this;
     }
 
-    public function getVariants(): ?self
+    public function addAttribute(ProductAttribute $attribute, string $value): void
     {
-        return $this->variants;
-    }
+        $this->attributes[] = [
+            'name' => $attribute,
+            'value' => $value,
+        ];
 
-    public function setVariants(?self $variants): static
-    {
-        $this->variants = $variants;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getParent(): Collection
-    {
-        return $this->parent;
-    }
-
-    public function addParent(self $parent): static
-    {
-        if (!$this->parent->contains($parent)) {
-            $this->parent->add($parent);
-            $parent->setVariants($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParent(self $parent): static
-    {
-        if ($this->parent->removeElement($parent)) {
-            // set the owning side to null (unless already changed)
-            if ($parent->getVariants() === $this) {
-                $parent->setVariants(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getCategory(): ?Category
@@ -222,6 +192,151 @@ class Product
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getVariants(): Collection
+    {
+        return $this->variants;
+    }
+
+    public function addVariant(?self $variant): self
+    {
+        if (is_array($variant)) {
+            foreach ($variant as $v) {
+                if ($v instanceof self) {
+                    $this->variants->add($variant);
+                    $variant->setParent($this);
+                }
+            }
+        }
+        if (!$this->variants->contains($variant)) {
+            $this->variants->add($variant);
+            $variant->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVariant(self $variant): self
+    {
+        if ($this->variants->removeElement($variant)) {
+            if ($variant->getParent() === $this) {
+                $variant->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(int $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getProductImages(): Collection
+    {
+        return $this->productImages;
+    }
+
+    public function addProductImage(Image $productImage): static
+    {
+        if (!$this->productImages->contains($productImage)) {
+            $this->productImages->add($productImage);
+        }
+
+        return $this;
+    }
+
+    public function removeProductImage(Image $productImage): static
+    {
+        $this->productImages->removeElement($productImage);
+
+        return $this;
+    }
+
+    public function getAddAttributes(): ?array
+    {
+        return $this->addAttributes;
+    }
+
+    public function setAddAttributes(?array $addAttributes): static
+    {
+        $this->addAttributes = $addAttributes;
+
+        return $this;
+    }
+
+    public function isLiqudation(): ?bool
+    {
+        return $this->liqudation;
+    }
+
+    public function setLiqudation(?bool $liqudation): static
+    {
+        $this->liqudation = $liqudation;
+
+        return $this;
+    }
+
+    public function getModelNumber(): ?string
+    {
+        return $this->modelNumber;
+    }
+
+    public function setModelNumber(?string $modelNumber): static
+    {
+        $this->modelNumber = $modelNumber;
+
+        return $this;
+    }
+
+    public function getUpc(): ?string
+    {
+        return $this->upc;
+    }
+
+    public function setUpc(?string $upc): static
+    {
+        $this->upc = $upc;
 
         return $this;
     }
