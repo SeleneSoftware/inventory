@@ -1,0 +1,7 @@
+# config/packages/overblog_graphql.yaml
+overblog_graphql:
+  definitions:
+    schema:
+        query: Query
+    mappings:
+        auto_discover: true

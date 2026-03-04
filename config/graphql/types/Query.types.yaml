@@ -1,0 +1,8 @@
+Query:
+    type: object
+    config:
+        description: "Root query"
+        fields:
+            stores:
+                type: "[Store]"
+                resolve: "@=resolver('App\\Resolver\\StoreResolver::resolveStores')"
