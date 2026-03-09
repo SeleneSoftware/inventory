@@ -1,0 +1,50 @@
+<?php
+
+namespace App\GraphQL\Type;
+
+use App\Repository\StoreRepository;
+use GraphQL\Language\AST\Node;
+use GraphQL\Type\Definition\ScalarType;
+use Overblog\GraphQLBundle\Annotation as GQL;
+use Overblog\GraphQLBundle\Definition\Resolver\AliasedInterface;
+
+#[GQL\Type(name: 'Store')]
+class StoreType extends ScalarType implements AliasedInterface
+{
+    public function __construct(
+        private StoreRepository $repo,
+    ) {
+    }
+
+    #[GQL\Field(type: 'ID!')]
+    public string $id;
+
+    #[GQL\Field(type: 'String!')]
+    public string $name = 'shiiit!';
+
+    public static function getAliases(): array
+    {
+        return ['Shit', 'Sshiit'];
+    }
+
+    #[GQL\Field(name: 'name')]
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function serialize($value): string
+    {
+        return $value;
+    }
+
+    public function parseValue($value): string
+    {
+        return 'joke';
+    }
+
+    public function parseLiteral(Node $valueNode, ?array $variables = null): string
+    {
+        return 'joke';
+    }
+}

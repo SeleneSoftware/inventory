@@ -1,0 +1,22 @@
+Store:
+  type: object
+  config:
+    description: "Store entity"
+    fields:
+      id:
+        type: "Int!"
+
+      name:
+        type: "String!"
+
+      link:
+        type: "String"
+
+      code:
+        type: "String"
+
+      status:
+        type: "Boolean"
+
+      categories:
+        type: "[Category]"
