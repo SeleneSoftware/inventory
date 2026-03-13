@@ -8,7 +8,7 @@ services:
       - "443:443"
     volumes:
       - ./docker-files/nginx:/etc/nginx
-      - ./:/var/www:rw
+      - ./:/var/www/inventory:rw
       - ./var/cache/nginx:/var/cache/nginx
       - ./var/log/nginx:/var/log/nginx
       - ./docker-files/certbot/conf/:/etc/nginx/ssl/:rw
@@ -20,14 +20,16 @@ services:
       # - mercure
     networks:
       - app-network
+    restart: 'unless-stopped'
 
   certbot:
     container_name: symfony_certbot
     image: docker.io/certbot/certbot:latest
     volumes:
-      - ./docker-files/certbot/www/:/var/www/certbot/
-      - ./docker-files/certbot/conf/:/etc/letsencrypt/
-       ./var/log/letsencrypt:/var/log/letsencrypt
+      - ./docker-files/certbot/www/:/var/www/certbot
+      - ./docker-files/certbot/conf/:/etc/letsencrypt
+      - ./var/log/letsencrypt:/var/log/letsencrypt
+    restart: 'unless-stopped'
 
   php:
     container_name: symfony_php
@@ -35,7 +37,7 @@ services:
       context: ./docker-files
       dockerfile: ./Dockerfile-php
     volumes:
-      - ./:/var/www:rw
+      - ./:/var/www/inventory:rw
       - ./var/log/php:/var/log/php
     working_dir: /var/www
     environment:
@@ -44,6 +46,7 @@ services:
       - mariadb
     networks:
       - app-network
+    restart: 'unless-stopped'
 
   mariadb:
     build:
@@ -68,6 +71,7 @@ services:
       retries: 5
       timeout: 5s
       start_period: 20s
+    restart: 'unless-stopped'
 
   elasticsearch:
     privileged: true
