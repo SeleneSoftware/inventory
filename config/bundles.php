@@ -18,4 +18,6 @@ return [
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
     Symfony\UX\Dropzone\DropzoneBundle::class => ['all' => true],
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
+    Overblog\GraphiQLBundle\OverblogGraphiQLBundle::class => ['dev' => true],
+    Overblog\GraphQLBundle\OverblogGraphQLBundle::class => ['all' => true],
 ];

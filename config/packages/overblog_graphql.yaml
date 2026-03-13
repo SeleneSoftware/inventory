@@ -1,0 +1,22 @@
+# config/packages/overblog_graphql.yaml
+# overblog_graphql:
+#     definitions:
+#         mappings:
+#             auto_discover: true
+
+# overblog_graphql:
+#   definitions:
+#     schema:
+#       default:
+#         query: Query
+
+overblog_graphql:
+  definitions:
+    schema:
+      default:
+        query: Query
+
+    mappings:
+      types:
+        - type: yaml
+          dir: "%kernel.project_dir%/config/graphql/types"

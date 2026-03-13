@@ -1,0 +1,10 @@
+Query:
+  type: object
+  config:
+    fields:
+      store:
+        type: Store
+        args:
+          id:
+            type: Int!
+        resolve: "@=resolver('store', [args['id']])"
