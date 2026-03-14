@@ -37,6 +37,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Role $permissions = null;
+
     public function getId(): ?Ulid
     {
         return $this->id;
@@ -116,5 +120,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function getPermissions(): ?Role
+    {
+        return $this->permissions;
+    }
+
+    public function setPermissions(Role $permissions): static
+    {
+        $this->permissions = $permissions;
+
+        return $this;
     }
 }
