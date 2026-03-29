@@ -12,7 +12,7 @@ final class UserControlVoter extends Voter
     {
         $array = explode('|', $attribute);
 
-        return in_array($array[0], ['store', 'category', 'product', 'location']);
+        return in_array($array[0], ['store', 'category', 'product', 'location', 'admin']);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -31,6 +31,14 @@ final class UserControlVoter extends Voter
         // admin trumps all
         if ('admin' === $permissions['role']) {
             return true;
+        }
+        // Some pages require admin.  This checks to see if you are an admin or not.
+        if ('admin' === $array[0]) {
+            if ('admin' === $permissions['role']) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         foreach ($permissions as $key => $perm) {
