@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserType;
+use App\Form\UserPermissionsType;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,12 +26,36 @@ final class UserSettingsController extends AbstractController
 
     #[Route('/settings/user/{id}', name: 'app_user_settings_edit')]
     #[IsGranted('admin')]
-    public function edit(User $id, Request $request): Response
+    public function edit(User $id, Request $request, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(UserType::class, $id);
+        $form = $this->createForm(UserPermissionsType::class, $id);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = [];
+
+            foreach ($form as $name => $field) {
+                $value = $field->getData();
+
+                if (is_array($value)) {
+                    $data[$name] = array_fill_keys($value, true);
+                } else {
+                    $data[$name] = $value;
+                }
+                // unset($data['email']);
+            }
+            $permission = $id->getPermissions();
+            $perms = array_replace_recursive($permission->getMode(), $data);
+
+            $permission->setMode($perms);
+
+            $em->persist($permission);
+            dd($permission->getMode());
+
+            return $this->redirectToRoute('app_dashboard');
+        }
 
         return $this->render('user_settings/edit.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
             'user' => $id,
         ]);
     }

@@ -29,6 +29,6 @@ return [
         'version' => '8.0.23',
     ],
     'alpinejs' => [
-        'version' => '3.15.8',
+        'version' => '3.15.9',
     ],
 ];

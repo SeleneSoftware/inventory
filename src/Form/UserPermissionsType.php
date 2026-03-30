@@ -5,23 +5,17 @@ namespace App\Form;
 use App\Entity\Role;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
+class UserPermissionsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('email')
-            // ->add('roles')
-            // ->add('permissions', ChoiceType::class, [
-            //     'mapped' => false,
-            //     'choices' => Role::DEFAULT_ROLES,
-            //     'expanded' => true,
-            //     'multiple' => true,
-            // ])
         ;
 
         foreach (Role::DEFAULT_ROLES as $entity => $permissions) {
@@ -38,8 +32,15 @@ class UserType extends AbstractType
                 'multiple' => true,
                 'label' => ucfirst($entity),
                 'mapped' => false,
+                'required' => false,
             ]);
         }
+
+        $builder->add('Admin', CheckboxType::class, [
+            'required' => false,
+            'label' => 'Enabled',
+            'mapped' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
