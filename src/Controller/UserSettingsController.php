@@ -15,33 +15,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 final class UserSettingsController extends AbstractController
 {
-    #[Route('/settings/user', name: 'app_user_settings')]
+    #[Route('/settings/user/permissions', name: 'app_user_permissions')]
     #[IsGranted('admin')]
-    public function index(UserRepository $repo): Response
+    public function indexPermissions(UserRepository $repo): Response
     {
         return $this->render('user_settings/index.html.twig', [
             'users' => $repo->findAll(),
         ]);
     }
 
-    #[Route('/settings/user/{id}', name: 'app_user_settings_edit')]
+    #[Route('/settings/user/permissions/{id}', name: 'app_user_permissions_edit')]
     #[IsGranted('admin')]
-    public function edit(User $id, Request $request, EntityManagerInterface $em): Response
+    public function editPermissions(User $id, Request $request, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(UserPermissionsType::class, $id);
+        $form = $this->createForm(UserPermissionsType::class, $id->getPermissions()->getMode());
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = [];
 
             foreach ($form as $name => $field) {
                 $value = $field->getData();
-
-                if (is_array($value)) {
-                    $data[$name] = array_fill_keys($value, true);
-                } else {
-                    $data[$name] = $value;
-                }
-                // unset($data['email']);
+                $data[$name] = $value;
             }
             $permission = $id->getPermissions();
             $perms = array_replace_recursive($permission->getMode(), $data);
@@ -49,9 +43,9 @@ final class UserSettingsController extends AbstractController
             $permission->setMode($perms);
 
             $em->persist($permission);
-            dd($permission->getMode());
+            $em->flush();
 
-            return $this->redirectToRoute('app_dashboard');
+            return $this->redirectToRoute('app_user_permissions');
         }
 
         return $this->render('user_settings/edit.html.twig', [
@@ -60,7 +54,7 @@ final class UserSettingsController extends AbstractController
         ]);
     }
 
-    #[Route('/settings/user/{id}/delete', name: 'app_user_settings_delete')]
+    #[Route('/settings/user/{id}/delete', name: 'app_user_permissions_delete')]
     #[IsGranted('admin')]
     public function delete(User $id): Response
     {
