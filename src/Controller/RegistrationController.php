@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Role;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\AppFormAuthenticator;
@@ -28,6 +29,11 @@ class RegistrationController extends AbstractController
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+
+            // set inital permissions
+            $perm = new Role();
+            $perm->setName('User Permissions'); // I think I might remove the name in the future.  May I will use it for something else. Dunno.
+            $user->setPermissions($perm);
 
             $entityManager->persist($user);
             $entityManager->flush();

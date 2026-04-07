@@ -25,6 +25,7 @@ final class CategoriesController extends AbstractController
     }
 
     #[Route('/categories/new', name: 'app_categories_new')]
+    #[IsGranted('category|create')]
     public function newCategory(EntityManagerInterface $entityManager, Request $request): Response
     {
         $category = new Category();
@@ -48,6 +49,7 @@ final class CategoriesController extends AbstractController
     }
 
     #[Route('/categories/edit/{id}', name: 'app_categories_edit')]
+    #[IsGranted('category|edit')]
     public function editCategory(EntityManagerInterface $entityManager, Request $request, Category $id): Response
     {
         $category = $id;
