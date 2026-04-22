@@ -6,6 +6,7 @@ use App\Repository\StoreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StoreRepository::class)]
 class Store
@@ -13,24 +14,30 @@ class Store
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['store'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['store'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['store'])]
     private ?string $link = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['store'])]
     private ?string $code = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['store'])]
     private ?bool $status = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\OneToMany(targetEntity: Category::class, mappedBy: 'store')]
+    #[Groups(['store'])]
     private Collection $categories;
 
     public function __construct()

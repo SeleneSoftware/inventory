@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 class Category
@@ -12,9 +13,11 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['store'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['store'])]
     private string $name;
 
     // Parent category (many categories can share the same parent)
@@ -24,6 +27,7 @@ class Category
 
     // Child categories
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    #[Groups(['store'])]
     private Collection $children;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]

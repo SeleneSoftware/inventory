@@ -8,17 +8,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 final class ApiStoresController extends AbstractController
 {
     #[Route('/api/stores', name: 'app_api_stores')]
-    public function index(StoreRepository $repo, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(StoreRepository $repo, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
     {
         if ($request->isMethod('POST')) {
             return $this->storesUpdate($repo, $request, $entityManager);
         }
 
-        return $this->stores($repo, $request);
+        return $this->stores2($repo, $request, $serializer);
+    }
+
+    public function stores2(StoreRepository $repo, Request $request, SerializerInterface $serializer): Response
+    {
+        return $this->json($repo->findAll(), context: ['groups' => ['store']]);
     }
 
     public function stores(StoreRepository $repo, Request $request): Response
