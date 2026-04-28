@@ -13,11 +13,11 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['store'])]
+    #[Groups(['store', 'category'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['store'])]
+    #[Groups(['store', 'category'])]
     private string $name;
 
     // Parent category (many categories can share the same parent)
@@ -27,7 +27,7 @@ class Category
 
     // Child categories
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
-    #[Groups(['store'])]
+    #[Groups(['store', 'category'])]
     private Collection $children;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]
@@ -37,6 +37,7 @@ class Category
      * @var Collection<int, Product>
      */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
+    #[Groups(['category'])]
     private Collection $products;
 
     public function __construct()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Repository\StoreRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,11 +19,12 @@ final class ApiStoresController extends AbstractController
             return $this->storesUpdate($repo, $request, $entityManager);
         }
 
-        return $this->stores2($repo, $request, $serializer);
+        return $this->stores($repo, $request, $serializer);
     }
 
     public function stores2(StoreRepository $repo, Request $request, SerializerInterface $serializer): Response
     {
+
         return $this->json($repo->findAll(), context: ['groups' => ['store']]);
     }
 
@@ -69,6 +70,7 @@ final class ApiStoresController extends AbstractController
         return $this->json($array);
     }
 
+    // Don't think I need to change or create stores via the API.
     public function storesUpdate(StoreRepository $repo, Request $request, EntityManagerInterface $entityManager): Response
     {
         if (!$request->query->get('id')) {
