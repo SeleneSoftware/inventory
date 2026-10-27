@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class ApiCategoriesController extends AbstractController
 {
-    #[Route('/api/categories', name: 'app_api_categories')]
+    #[Route('/api/category', name: 'app_api_category')]
     public function index(CategoryRepository $repo, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
     {
         if ($request->isMethod('POST')) {
@@ -24,6 +24,32 @@ final class ApiCategoriesController extends AbstractController
 
     protected function categories(CategoryRepository $repo, Request $request, SerializerInterface $serializer): Response
     {
-        return $this->json($repo->findAll(), context: ['groups' => ['category']]);
+        foreach ($request->query as $field => $query) {
+            switch ($field) {
+                case 'id':
+                    $results = [$repo->find($query)];
+                    break;
+                case 'name':
+                    $results = [$repo->findOneByName($query)];
+                    break;
+                case 'store':
+                    $results = [$repo->findAllByStore($query)];
+                    break;
+                case 'children':
+                    $results = [$repo->find($query)->getChildren()];
+                    break;
+                case 'fuck':
+                    dd('fuuuuck');
+                    // no break
+                default:
+                    $results = $repo->findAll();
+            }
+        }
+        // If this looks redundant, it's because it has to be.
+        if (!isset($results)) {
+            $results = $repo->findAll();
+        }
+
+        return $this->json($results, context: ['groups' => ['category']]);
     }
 }
