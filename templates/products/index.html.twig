@@ -78,7 +78,10 @@
                                                     <input type="checkbox" class="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700">
                                                     #}
                                                     <div class="flex items-center gap-x-2">
-                                                        <img class="object-cover w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" alt="">
+                                                        {# <img class="object-cover w-10 h-10 rounded-full" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80" alt=""> #}
+                                                        {% for junk in i.getProductImages() %}
+                                                            <img class="object-cover w-10 h-10 rounded-full" src="{{ app.request.getSchemeAndHttpHost() }}/{{ junk.getUrl() }}" alt="">
+                                                        {% endfor %}
                                                         <div>
                                                             <h2 class="font-medium text-gray-800 dark:text-white ">{{ i.getName() }}</h2>
                                                             <p class="text-sm font-normal text-gray-600 dark:text-gray-400">-</p>
@@ -104,7 +107,23 @@
                                                 #}
                                             </td>
                                             <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{{ i.getSKU() }}</td>
-                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{{ i.getType() }}</td>
+                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                                                {% if i.getType() == constant('App\\Entity\\Product::TYPE_SINGLE') %}
+                                                    Single Product
+                                                {% elseif i.getType() == constant('App\\Entity\\Product::TYPE_PARENT') %}
+                                                    Variable Product Parent
+                                                {% elseif i.getType() == constant('App\\Entity\\Product::TYPE_VARIANT') %}
+                                                    Variant Product
+                                                {% elseif i.getType() == constant('App\\Entity\\Product::TYPE_VIRTUAL') %}
+                                                    Virtual Product
+                                                {% elseif i.getType() == constant('App\\Entity\\Product::TYPE_SERVICE') %}
+                                                    Service Product
+                                                {% elseif i.getType() == constant('App\\Entity\\Product::TYPE_BUNDLE') %}
+                                                    Bundle Product
+                                                {% else %}
+                                                    {{ i.getType() }}
+                                                {% endif %}
+                                            </td>
                                             <td class="px-4 py-4 text-sm whitespace-nowrap">
                                                 <div class="flex items-center gap-x-2">
                                                     <p class="px-3 py-1 text-xs text-indigo-500 rounded-full dark:bg-gray-800 bg-indigo-100/60">Design</p>
@@ -192,4 +211,4 @@
             </div>
             #}
         </section>
-{% endblock %}
+    {% endblock %}
